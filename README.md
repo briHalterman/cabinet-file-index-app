@@ -180,7 +180,7 @@ topics:
 4. ~~`bundle exec rails generate migration create_categories`~~
 5. ~~`bundle exec rails generate migration create_topics`~~
 6. ~~`bundle exec rails generate migration create_card_decks`~~
-7. `bundle exec rails generate migration create_deck_topics`
+7. ~~`bundle exec rails generate migration create_deck_topics`~~
 
 ---
 

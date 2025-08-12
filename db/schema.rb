@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_12_024958) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_025450) do
   create_table "card_decks", force: :cascade do |t|
     t.integer "deck_id"
     t.integer "card_id"
@@ -32,6 +32,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_024958) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "deck_topics", force: :cascade do |t|
+    t.integer "deck_id"
+    t.integer "topic_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deck_id"], name: "index_deck_topics_on_deck_id"
+    t.index ["topic_id"], name: "index_deck_topics_on_topic_id"
   end
 
   create_table "decks", force: :cascade do |t|
