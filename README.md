@@ -125,7 +125,7 @@ end
 
 cards:
 - id              integer
-- front_content   text
+- face_content    text
 - back_heading    string
 - back_content    text
 - created_at      datetime
@@ -176,7 +176,7 @@ topics:
 ## Planned Migrations
 1. ~~`bundle exec rails generate migration create_users`~~
 2. ~~`bundle exec rails generate migration create_decks`~~
-3. `bundle exec rails generate migration create_cards`
+3. ~~`bundle exec rails generate migration create_cards`~~
 4. `bundle exec rails generate migration create_categories`
 5. `bundle exec rails generate migration create_topics`
 6. `bundle exec rails generate migration create_card_decks`
