@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_12_024018) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_024322) do
   create_table "cards", force: :cascade do |t|
     t.string "title"
     t.text "face_content"
@@ -29,6 +29,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_024018) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "topics", force: :cascade do |t|
+    t.string "title"
+    t.integer "categories_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["categories_id"], name: "index_topics_on_categories_id"
   end
 
   create_table "users", force: :cascade do |t|
