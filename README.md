@@ -174,8 +174,8 @@ topics:
 *tba*
 
 ## Planned Migrations
-1. `bundle exec rails generate migration create_users`
-2. `bundle exec rails generate migration create_decks`
+1. ~~`bundle exec rails generate migration create_users`~~
+2. ~~`bundle exec rails generate migration create_decks`~~
 3. `bundle exec rails generate migration create_cards`
 4. `bundle exec rails generate migration create_categories`
 5. `bundle exec rails generate migration create_topics`
