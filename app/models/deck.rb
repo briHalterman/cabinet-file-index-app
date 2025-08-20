@@ -4,4 +4,10 @@ class Deck < ApplicationRecord
 
   has_many :deck_topics
   has_many :topics, through: :deck_topics
+
+  validates :title, presence: true
+
+  def deck_title
+    "#{title}"
+  end
 end

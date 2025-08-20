@@ -1,5 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Deck, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'returns the title for a deck' do
+    deck = Deck.create(title: 'Test Deck')
+
+    expect(deck.deck_title).to eq 'Test Deck'
+  end
 end
