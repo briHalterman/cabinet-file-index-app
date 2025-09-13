@@ -186,24 +186,24 @@ topics:
 (MVP)
 
 <br>
-- View all categories*
+- ~~View all categories*~~
 - View form to create new category*
 - Create new category*
-- View list of category topics
+- ~~View list of category topics*~~
 - View form to edit category*
 - Edit category*
 - Delete category*
 <br>
 - View form to create new topic*
 - Create a new topic*
-- View the decks of a topic
+- View the decks of a topic*
 - View form to edit topic*
 - Edit topic*
 - Delete topic*
 <br>
 - View form to create new deck*
 - Create new deck*
-- View a list of cards in a deck
+- View a list of cards in a deck*
 - View form to edit deck*
 - Edit deck*
 - Delete deck*
@@ -212,7 +212,7 @@ topics:
 - Create new index card*
 - View front of card
 - View back of card
-- View form to edit index card
+- View form to edit index card*
 - Edit index card*
 - Delete index card*
 

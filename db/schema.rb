@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_13_161535) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_151552) do
   create_table "card_decks", force: :cascade do |t|
     t.integer "deck_id"
     t.integer "card_id"
@@ -51,10 +51,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_161535) do
 
   create_table "topics", force: :cascade do |t|
     t.string "title"
-    t.integer "categories_id"
+    t.integer "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["categories_id"], name: "index_topics_on_categories_id"
+    t.index ["category_id"], name: "index_topics_on_category_id"
   end
 
   create_table "users", force: :cascade do |t|
