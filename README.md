@@ -203,7 +203,7 @@ topics:
 <br>
 - View form to create new deck*
 - Create new deck*
-- View a list of cards in a deck*
+- ~~View a list of cards in a deck*~~
 - View form to edit deck*
 - Edit deck*
 - Delete deck*
