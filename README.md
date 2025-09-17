@@ -210,13 +210,17 @@ topics:
 <br>
 - View form to create new index card*
 - Create new index card*
-- View front of card
-- View back of card
+- ~~View all cards*~~
+- View front of card*
+- View back of card*
 - View form to edit index card*
 - Edit index card*
 - Delete index card*
 
-(* Resourceful Route)
+(* Restful Route)
+
+- query params - front/back
+- dashboard?
 
 ---
 
