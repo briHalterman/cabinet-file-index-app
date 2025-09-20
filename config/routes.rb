@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
   resources :categories
   resources :topics
-  resources :decks
-  resources :cards
+  resources :decks do
+    resources :cards
+  end
+  resources :cards, only: [:index]
 end

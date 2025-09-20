@@ -23,8 +23,12 @@ RSpec.describe "Cards", type: :request do
 
       let!(:deck) do
         Deck.create!(
-          title: 'Test Deck',
+          title: 'Test Deck'
         )
+      end
+
+      before do
+        topic.decks << deck
       end
 
       let!(:card1) do
@@ -37,6 +41,11 @@ RSpec.describe "Cards", type: :request do
         Card.create!(
           title: 'Test Card 2'
         )
+      end
+
+      before do
+        deck.cards << card1
+        deck.cards << card2
       end
 
       it 'returns a page containing titles of all cards' do
@@ -56,7 +65,7 @@ RSpec.describe "Cards", type: :request do
 
   end
 
-  describe "GET /cards/:id?side=face" do
+  describe "GET /decks/:id/cards/:id?side=face" do
       let!(:category) do
         Category.create!(
           title: 'Test Category'
@@ -84,13 +93,18 @@ RSpec.describe "Cards", type: :request do
         )
       end
 
+      it 'returns the title of the deck' do
+        get "/decks/#{deck.id}/cards/#{card.id}?side=face"
+        expect(response.body).to include('Test Deck')
+      end
+
       it 'returns the content on the face of the card' do
-        get "/cards/#{card.id}?side=face"
+        get "/decks/#{deck.id}/cards/#{card.id}?side=face"
         expect(response.body).to include('This is the content on the face (lined) of the index card.')
       end
   end
 
-    describe "GET /cards/:id?side=back" do
+    describe "GET /decks/:id/cards/:id?side=back" do
       let!(:category) do
         Category.create!(
           title: 'Test Category'
@@ -118,8 +132,13 @@ RSpec.describe "Cards", type: :request do
         )
       end
 
+      it 'returns the title of the deck' do
+        get "/decks/#{deck.id}/cards/#{card.id}?side=back"
+        expect(response.body).to include('Test Deck')
+      end
+
       it 'returns the content on the face of the card' do
-        get "/cards/#{card.id}?side=back"
+        get "/decks/#{deck.id}/cards/#{card.id}?side=back"
         expect(response.body).to include('The back side of the card is the blank side.')
       end
   end

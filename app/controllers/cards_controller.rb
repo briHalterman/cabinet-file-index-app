@@ -4,7 +4,8 @@ class CardsController < ApplicationController
   end
 
   def show
-    @card = Card.find(params[:id])
+    @deck = Deck.find(params[:deck_id])
+    @card = @deck.cards.find(params[:id])
 
     if params[:side] == "face"
       @content = @card.face_content
