@@ -26,7 +26,7 @@ RSpec.describe "Decks", type: :request do
     end
 
     it 'responds with 200 OK' do
-      get "/topics/#{deck.id}"
+      get "/decks/#{deck.id}"
 
       expect(response).to have_http_status(:ok)
     end
@@ -55,13 +55,19 @@ RSpec.describe "Decks", type: :request do
         deck.cards << card2
       end
 
-      it "returns a page containing titles of all the topic's decks" do
+      it "returns a page containing titles of all the deck's cards" do
         get "/decks/#{deck.id}"
 
         expect(response.body).to include('Test Card 1')
         expect(response.body).to include('Test Card 2')
       end
 
+      it 'links each card to the card face show page' do
+        get "/decks/#{deck.id}"
+
+        expect(response.body).to include("cards/#{card1.id}?side=face")
+        expect(response.body).to include("cards/#{card2.id}?side=face")
+      end
     end
   end
 end
