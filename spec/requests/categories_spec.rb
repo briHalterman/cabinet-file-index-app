@@ -8,20 +8,29 @@ RSpec.describe "Categories", type: :request do
     end
 
     context 'categories exist' do
-      before do
+      let!(:category1) {
         Category.create!(
-          title: 'Test Category 1'
+        title: 'Test Category 1'
         )
+      }
 
+      let!(:category2) {
         Category.create!(
-          title: 'Test Category 2'
+        title: 'Test Category 2'
         )
-      end
+      }
 
       it 'returns a page containing titles of all categories' do
         get '/categories'
         expect(response.body).to include('Test Category 1')
         expect(response.body).to include('Test Category 2')
+      end
+
+      it 'links each category to the category show page' do
+        get '/categories'
+
+        expect(response.body).to include("categories/#{category1.id}")
+        expect(response.body).to include("categories/#{category2.id}")
       end
     end
 
