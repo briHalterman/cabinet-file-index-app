@@ -8,17 +8,17 @@ RSpec.describe "Categories", type: :request do
     end
 
     context 'categories exist' do
-      let!(:category1) {
+      let!(:category1) do
         Category.create!(
         title: 'Test Category 1'
         )
-      }
+      end
 
-      let!(:category2) {
+      let!(:category2) do
         Category.create!(
         title: 'Test Category 2'
         )
-      }
+      end
 
       it 'returns a page containing titles of all categories' do
         get '/categories'
@@ -84,6 +84,12 @@ RSpec.describe "Categories", type: :request do
         expect(response.body).to include('Test Topic 2')
       end
 
+      it 'links each topic to the topic show page' do
+        get "/categories/#{category.id}"
+
+        expect(response.body).to include("topics/#{topic1.id}")
+        expect(response.body).to include("topics/#{topic2.id}")
+      end
     end
   end
 end

@@ -1,6 +1,6 @@
 <h1><%= @category.title %><h1>
 <ul>
   <% @category.topics.each do |topic| %>
-    <li><%= "#{topic.title}" %></li>
+    <li><%= link_to "#{topic.title}", topic %></li>
   <% end %>
 </ul>
