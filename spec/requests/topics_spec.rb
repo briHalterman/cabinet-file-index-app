@@ -52,6 +52,12 @@ RSpec.describe "Topics", type: :request do
         expect(response.body).to include('Test Deck 2')
       end
 
+      it 'links each deck to the deck show page' do
+        get "/topics/#{topic.id}"
+
+        expect(response.body).to include("decks/#{deck1.id}")
+        expect(response.body).to include("decks/#{deck2.id}")
+      end
     end
   end
 end
