@@ -1,0 +1,6 @@
+<h1><%= @topic.title %><h1>
+<ul>
+  <% @topic.decks.each do |deck| %>
+    <li><%= link_to deck.title, deck %></li>
+  <% end %>
+</ul>
