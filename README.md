@@ -275,8 +275,8 @@ erDiagram
 - ~~View all categories~~
 - ~~View list of category topics~~
 <br>
-- View form to create new topic
-- Create a new topic
+- ~~View form to create new topic~~
+- ~~Create a new topic~~
 - ~~View the decks of a topic~~
 - View form to edit topic
 - Edit topic

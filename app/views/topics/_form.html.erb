@@ -1,6 +1,6 @@
 <%= form_with(model: @topic) do |form| %>
   <% if @topic.errors.any? %>
-    <h2><%= pluralize(topic.errors.count, "error") %> topic not saved:</h2>
+    <h2><%= pluralize(@topic.errors.count, "error") %> topic not saved:</h2>
 
     <ul>
       <% @topic.errors.each do |error| %>
