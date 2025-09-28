@@ -2,15 +2,63 @@ require 'rails_helper'
 
 RSpec.describe "Dashboard", type: :request do
   describe "GET /dashboard" do
+    before do
+      @category1 = Category.create!(
+        title: "Test Category 1"
+      )
+
+      @category2 = Category.create!(
+        title: "Test Category 2"
+      )
+
+      @topic1 = Topic.create!(
+        title: "Test Topic 1",
+        category_id: @category1.id
+      )
+
+      @topic2 = Topic.create!(
+        title: "Test Topic 2",
+        category_id: @category1.id
+      )
+
+      @topic3 = Topic.create!(
+        title: "Test Topic 3",
+        category_id: @category1.id
+      )
+
+      @topic4 = Topic.create!(
+        title: "Test Topic 4",
+        category_id: @category1.id
+      )
+    end
+
     it "returns a 200 OK status" do
       get "/dashboard"
       expect(response).to have_http_status(:ok)
     end
 
-    it 'displays links to categories' do
+    it 'displays categories' do
+      get "/dashboard"
+
+      expect(response.body).to include("Test Category 1")
+      expect(response.body).to include("Test Category 2")
     end
 
-    it 'displays links to the most recently edited topics in each category' do
+    it 'displays links to the three most recently edited topics in each category' do
+      get "/dashboard"
+
+      expect(response.body).to include("/topics/#{@topic1.id}")
+      expect(response.body).to include("/topics/#{@topic2.id}")
+      expect(response.body).to include("/topics/#{@topic3.id}")
+
+      expect(response.body).not_to include("/topics/#{@topic4.id}")
+    end
+
+    it "displays a link to view all of the category's topics" do
+      get "/dashboard"
+
+      expect(response.body).to include("/categories/#{@category1.id}")
+      expect(response.body).to include("/categories/#{@category2.id}")
     end
   end
 end
