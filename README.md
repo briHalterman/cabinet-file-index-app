@@ -19,7 +19,7 @@ This is a simple Ruby on Rails application that stores, sorts and displays digit
 
 ## Course Objectives
 
-"In this course, we'll focus on learning the fundamentals of building and working on full stack web applications, including data modeling, application design, API design and the web request cycle. We'll also focus on learning to troubleshoot and debug our code, as well as the fundamentals of automated and manual testing. We'll learn these concepts using Ruby and Ruby on Rails, but the goal is to gain knowledge that is core to full stack web development regardless of language and framework. Then the next web app language and framework you learn will be an easier and faster journey for you. The tools we use as programmers are constantly changing, but the concepts are similar and often build on top of what came before. The ability to learn new languages and frameworks is an essential part of continuing to be a productive programmer. The more exposure and experience we gain with different languages and frameworks, the easier we'll be able to see patterns and analogies in new languages and frameworks we pick up. So don't fret over the question of "what to learn next" because one of the most important skills you can gain now is learning to learn. Enjoy the journey!"
+"In this course, we'll focus on learning the fundamentals of building and working on full stack web applications, including data modeling, application design, API design and the web request cycle. We'll also focus on learning to troubleshoot and debug our code, as well as the fundamentals of automated and manual testing. We'll learn these concepts using Ruby and Ruby on Rails, but the goal is to gain knowledge that is core to full stack web development regardless of language and framework. Then the next web app language and framework you learn will be an easier and faster journey for you. The tools we use as programmers are constantly changing, but the concepts are similar and often build on top of what came before. The ability to learn new languages and frameworks is an essential part of continuing to be a productive programmer. The more exposure and experience we gain with different languages and frameworks, the easier we'll be able to see patterns and analogies in new languages and frameworks we pick up. So don't fret over the question of 'what to learn next' because one of the most important skills you can gain now is learning to learn. Enjoy the journey!"
 
 ### Lesson and Course Objectives
 
@@ -54,6 +54,22 @@ This is a simple Ruby on Rails application that stores, sorts and displays digit
 ## Project Purpose
 
 This application is the final project for the advanced Ruby on Rails course at Code the Dream, intended to provide hands-on experience applying the knowledge learned throughout the course to an independently designed Rails application.
+
+## Course Objectives
+### As Applied to the Final Project
+The project you build throughout the course should demonstrate the course objectives (as they apply). Here they are as applied to your project:
+- Design and implement a data model using appropriate associations, data types and constraints
+  - Demonstrate belongs_to, has_many and has_many :through relationships where it makes sense.
+  - Include data constraints at the database level and at the model level where it makes sense. For example, consider what attributes should never be null.
+  - Include other validations in models where it makes sense. (presence, inclusion, etc)
+- Add behavior to models where appropriate
+  - In addition to validations, consider what behavior your models should be responsible for and add any behaviors that make sense.
+- Design and implement CRUD-based behaviors for resources where appropriate
+  - Create an intentional design that only includes the CRUD functionality that makes sense for each resource.
+  - Choose non-resourceful routes when appropriate. Your application should have at least one route (and possibly view) that displays data from multiple models, or that updates multiple models for post and patch/put routes.
+- Write rspec tests that cover the most critical functionality
+  - Include model specs that test any special behaviors you added. If you've added any custom validations, you can test that as well.
+  - Include request specs especially for non-resourceful routes, or any routes with special requirements for parameters, access, etc.
 
 ## Project Rubric
 
@@ -171,7 +187,75 @@ topics:
 ![Entity relationship diagram for this project](docs/ERD.png)
 
 ## Mermaid ERD
-*tba*
+```mermaid
+erDiagram
+  USER {
+    integer id PK
+    string email
+    string password
+    datetime created_at
+    datetime updated_at
+  }
+
+  DECK {
+    integer id PK
+    string title
+    datetime created_at
+    datetime updated_at
+  }
+
+  CARD_DECK {
+    integer id PK
+    integer deck_id FK
+    integer card_id FK
+    datetime created_at
+    datetime updated_at
+  }
+
+  CARD {
+    integer id PK
+    text face_content
+    string back_heading
+    text back_content
+    datetime created_at
+    datetime updated_at
+  }
+
+  CATEGORY {
+    integer id PK
+    string title
+    datetime created_at
+    datetime updated_at
+  }
+
+  DECK_TOPIC {
+    integer id PK
+    integer deck_id FK
+    integer topic_id FK
+    datetime created_at
+    datetime updated_at
+  }
+
+  TOPIC {
+    integer id PK
+    string title
+    integer category_id FK
+    datetime created_at
+    datetime updated_at
+  }
+
+  DECK ||--o{ CARD_DECK : "has_many"
+  CARD ||--o{ CARD_DECK : "has_many"
+  DECK ||--o{ DECK_TOPIC : "has_many"
+  TOPIC ||--o{ DECK_TOPIC : "has_many"
+  CATEGORY ||--o{ TOPIC : "has_many"
+  DECK_TOPIC }o--|| DECK : "belongs_to"
+  DECK_TOPIC }o--|| TOPIC : "belongs_to"
+  CARD_DECK }o--|| DECK : "belongs_to"
+  CARD_DECK }o--|| CARD : "belongs_to"
+  TOPIC }o--|| CATEGORY : "belongs_to"
+```
+> **Diagram Attribution:** Generated by GitHub Copilot Chat on September 28, 2025.
 
 ## Planned Migrations
 1. ~~`bundle exec rails generate migration create_users`~~
@@ -185,42 +269,35 @@ topics:
 ## Planned Routes
 (MVP)
 
+- Dashboard*
 <br>
-- ~~View all categories*~~
-- View form to create new category*
-- Create new category*
-- ~~View list of category topics*~~
-- View form to edit category*
-- Edit category*
-- Delete category*
+- ~~View all categories~~
+- ~~View list of category topics~~
 <br>
-- View form to create new topic*
-- Create a new topic*
-- ~~View the decks of a topic*~~
-- View form to edit topic*
-- Edit topic*
-- Delete topic*
+- View form to create new topic
+- Create a new topic
+- ~~View the decks of a topic~~
+- View form to edit topic
+- Edit topic
+- Delete topic
 <br>
-- View form to create new deck*
-- Create new deck*
-- ~~View a list of cards in a deck*~~
-- View form to edit deck*
-- Edit deck*
-- Delete deck*
+- View form to create new deck
+- Create new deck
+- ~~View a list of cards in a deck~~
+- View form to edit deck
+- Edit deck
+- Delete deck
 <br>
-- View form to create new index card*
-- Create new index card*
-- ~~View all cards*~~
-- View front of card*
-- View back of card*
-- View form to edit index card*
-- Edit index card*
-- Delete index card*
+- View form to create new index card
+- Create new index card
+- ~~View all cards~~
+- ~~View front of card~~
+- ~~View back of card~~
+- View form to edit index card
+- Edit index card
+- Delete index card
 
-(* Restful Route)
-
-- query params - front/back
-- dashboard?
+(* Non-resourceful Route)
 
 ---
 
