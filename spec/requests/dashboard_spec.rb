@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "AdminDashboards", type: :request do
+RSpec.describe "Dashboard", type: :request do
   describe "GET /dashboard" do
     it "returns a 200 OK status" do
       get "/dashboard"

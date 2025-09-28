@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  get '/dashboard', to: 'admin_dashboard#index'
+  get '/dashboard', to: 'dashboard#index'
 
   resources :categories
   resources :topics
