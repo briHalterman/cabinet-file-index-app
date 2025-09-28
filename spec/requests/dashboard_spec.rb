@@ -27,8 +27,28 @@ RSpec.describe "Dashboard", type: :request do
       )
 
       @topic4 = Topic.create!(
-        title: "Test Topic 4",
+        title: "Test Topic 2",
         category_id: @category1.id
+      )
+
+      @topic5 = Topic.create!(
+        title: "Test Topic 5",
+        category_id: @category2.id
+      )
+
+      @topic6 = Topic.create!(
+        title: "Test Topic 6",
+        category_id: @category2.id
+      )
+
+      @topic7 = Topic.create!(
+        title: "Test Topic 7",
+        category_id: @category2.id
+      )
+
+      @topic8 = Topic.create!(
+        title: "Test Topic 8",
+        category_id: @category2.id
       )
     end
 
@@ -47,11 +67,17 @@ RSpec.describe "Dashboard", type: :request do
     it 'displays links to the three most recently edited topics in each category' do
       get "/dashboard"
 
-      expect(response.body).to include("/topics/#{@topic1.id}")
-      expect(response.body).to include("/topics/#{@topic2.id}")
+      expect(response.body).to include("/topics/#{@topic4.id}")
       expect(response.body).to include("/topics/#{@topic3.id}")
+      expect(response.body).to include("/topics/#{@topic2.id}")
 
-      expect(response.body).not_to include("/topics/#{@topic4.id}")
+      expect(response.body).not_to include("/topics/#{@topic1.id}")
+
+      expect(response.body).to include("/topics/#{@topic8.id}")
+      expect(response.body).to include("/topics/#{@topic7.id}")
+      expect(response.body).to include("/topics/#{@topic6.id}")
+
+      expect(response.body).not_to include("/topics/#{@topic5.id}")
     end
 
     it "displays a link to view all of the category's topics" do

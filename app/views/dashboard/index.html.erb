@@ -1,2 +1,17 @@
-<h1>Dashboard#index</h1>
-<p>Find me in app/views/dashboard/index.html.erb</p>
+<h1>Dashboard</h1>
+
+<ul>
+  <% @categories.each do |category| %>
+    <li>
+      <h2><%= "#{category.title}" %></h2>
+      <ul>
+        <% topics = category.topics.order(updated_at: :desc).limit(3) %>
+        <% topics.each do |topic| %>
+          <li>
+            <a href="<%= topic_path(topic) %>"><%= topic.title %></a>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>
