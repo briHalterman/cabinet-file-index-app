@@ -4,7 +4,10 @@ class TopicsController < ApplicationController
     @decks = @topic.decks
   end
 
-  def new; end
+  def new
+    @topic = Topic.new
+    @categories = Category.all
+  end
 
   def create; end
 

@@ -1,0 +1,25 @@
+<%= form_with(model: @topic) do |form| %>
+  <% if @topic.errors.any? %>
+    <h2><%= pluralize(topic.errors.count, "error") %> topic not saved:</h2>
+
+    <ul>
+      <% @topic.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title, {prompt: 'Enter topic name'} %>
+  </div>
+
+  <div>
+    <%= form.label :category_id, style: "display: block" %>
+    <%= form.select :category_id, options_from_collection_for_select(@categories, :id, :title), { prompt: 'Select Category' } %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
