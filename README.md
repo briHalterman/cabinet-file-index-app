@@ -14,6 +14,7 @@ This is a simple Ruby on Rails application that stores, sorts and displays digit
 - [Entity-Relationship Diagram](#entity-relationship-diagram)
 - [Mermaid ERD](#mermaid-erd)
 - [Planned Migrations](#planned-migrations)
+- [Planned Routes](#planned-routes)
 
 ---
 
@@ -269,7 +270,7 @@ erDiagram
 ## Planned Routes
 (MVP)
 
-- Dashboard*
+- ~~Dashboard*~~
 <br>
 - ~~View all categories~~
 - ~~View list of category topics~~
