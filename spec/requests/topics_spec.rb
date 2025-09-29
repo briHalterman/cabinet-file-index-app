@@ -111,4 +111,37 @@ RSpec.describe "Topics", type: :request do
       expect(response).to have_http_status(:bad_request)
     end
   end
+
+  describe 'GET /topics/:id/edit' do
+    let!(:category) do
+      Category.create!(
+        title: "Test category"
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: "Test Topic",
+        category_id: category.id
+      )
+    end
+
+    it 'responds with 200 OK' do
+      get "/topics/#{topic.id}/edit"
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'displays the title label' do
+      get "/topics/#{topic.id}/edit"
+
+      expect(response.body).to include('Title')
+    end
+
+    it 'displays the category label' do
+      get "/topics/#{topic.id}/edit"
+
+      expect(response.body).to include('Category')
+    end
+  end
 end

@@ -25,7 +25,7 @@ class TopicsController < ApplicationController
   end
 
   def edit
-    # @topic =
+    @topic =  Topic.find(params[:id])
     @categories = Category.all
   end
 
