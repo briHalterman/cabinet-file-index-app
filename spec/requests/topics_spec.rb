@@ -144,4 +144,71 @@ RSpec.describe "Topics", type: :request do
       expect(response.body).to include('Category')
     end
   end
+
+  describe 'PUT /topics/:id' do
+    let!(:category1) do
+      Category.create!(
+        title: "Test category 1"
+      )
+    end
+
+    let!(:category2) do
+      Category.create!(
+        title: "Test category 2"
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: "Test topic",
+        category_id: category1.id
+      )
+    end
+
+    it "updates a topic's title and/or category when category is valid and topic exists" do
+      put "/topics/#{topic.id}", params: {
+        topic: {
+          title: "New title",
+          category_id: category2.id
+        }
+      }
+
+      expect(response).to redirect_to(topic)
+      topic.reload
+      expect(topic.title).to eq('New title')
+      expect(topic.category.title).to eq('Test category 2')
+    end
+
+    it 'responds with 400 status when category id is not provided' do
+      put "/topics/#{topic.id}", params: {
+        topic: {
+          title: "New title"
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 400 status when category id does not belong to a valid category' do
+      put "/topics/#{topic.id}", params: {
+        topic: {
+          title: "New title",
+          category_id: 'nope'
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 404 status when topic id does not belong to an existing trimester' do
+      put '/topics/nope', params: {
+        topic: {
+          title: 'New title',
+          category_id: category2.id
+        }
+      }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

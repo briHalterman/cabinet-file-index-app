@@ -29,7 +29,20 @@ class TopicsController < ApplicationController
     @categories = Category.all
   end
 
-  def update; end
+  def update
+    @topic = Topic.find(params[:id])
+    @categories = Category.all
+
+    respond_to do |format|
+      if topic_params[:category_id].present? && @topic.update(topic_params)
+        format.html { redirect_to @topic, notice: 'Topic was successfully updated.' }
+        format.json { render :show, status: :created, location: @topic }
+      else
+        format.html { render :edit, status: :bad_request }
+        format.json { render json @topic.errors, status: :bad_request }
+      end
+    end
+  end
 
   def destroy; end
 
