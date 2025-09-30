@@ -13,4 +13,14 @@ class CardsController < ApplicationController
       @content = @card.back_content
     end
   end
+
+  def new; end
+
+  def create; end
+
+  def edit; end
+
+  def update; end
+
+  def destroy; end
 end

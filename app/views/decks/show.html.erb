@@ -1,6 +1,6 @@
 <h1><%= @deck.title %></h1>
 <ul>
-  <% @deck.cards.each do |card| %>
+  <% @cards.each do |card| %>
     <li><%= link_to card.title, deck_card_path(@deck, card, side: "face") %></li>
   <% end %>
 </ul>
