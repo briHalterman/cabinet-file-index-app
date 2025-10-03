@@ -78,4 +78,54 @@ RSpec.describe "Decks", type: :request do
       expect(response.body).to include('Topic')
     end
   end
+
+  describe 'POST /decks' do
+    let!(:category) do
+      Category.create!(
+        title: 'Test category'
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: 'Test topic',
+        category_id: category.id
+      )
+    end
+
+    it "creates a new deck when title and topic exist and are valid" do
+      post '/decks', params: {
+        deck: {
+          title: 'New deck',
+          topic_id: topic.id
+        }
+      }
+
+      expect(response).to redirect_to(deck_path(Deck.last))
+
+      expect(Deck.last.title).to eq('New deck')
+      expect(Deck.last.topics.first.title).to eq('Test topic')
+    end
+
+    it 'responds with 400 status when no topic is provided' do
+      post '/decks', params: {
+        deck: {
+          title: 'New topic'
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 400 status when topic id does not belong to an existing topic' do
+      post '/decks', params: {
+        deck: {
+          title: 'New topic',
+          topic_id: 'nope'
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
 end
