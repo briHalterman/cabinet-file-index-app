@@ -37,7 +37,10 @@ class DecksController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    @deck = Deck.find(params[:id])
+    @topics = Topic.all
+  end
 
   def update; end
 

@@ -128,4 +128,47 @@ RSpec.describe "Decks", type: :request do
       expect(response).to have_http_status(:bad_request)
     end
   end
+
+  describe 'GET /decks/:id/edit' do
+    let!(:category) do
+      Category.create!(
+        title: 'Test category'
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: 'Test topic',
+        category_id: category.id
+      )
+    end
+
+    let!(:deck) do
+      Deck.create!(
+        title: 'Test deck'
+      )
+    end
+
+    before do
+      topic.decks << deck
+    end
+
+    it 'responds with 200 OK' do
+      get "/decks/#{deck.id}/edit"
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'displays the title label' do
+      get "/decks/#{deck.id}/edit"
+
+      expect(response.body).to include('Title')
+    end
+
+    it 'displays the topic label' do
+      get "/decks/#{deck.id}/edit"
+
+      expect(response.body).to include('Topic')
+    end
+  end
 end
