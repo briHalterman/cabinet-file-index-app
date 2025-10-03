@@ -70,4 +70,12 @@ RSpec.describe "Decks", type: :request do
       end
     end
   end
+
+  describe 'GET /decks/new' do
+    it 'displays the title and topic labels' do
+      get '/topics/new'
+      expect(response.body).to include('Title')
+      expect(response.body).to include('Topic')
+    end
+  end
 end

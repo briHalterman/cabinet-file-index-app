@@ -4,7 +4,10 @@ class DecksController < ApplicationController
     @cards = @deck.cards
   end
 
-  def new; end
+  def new
+    @deck = Deck.new
+    @topics = Topic.all
+  end
 
   def create; end
 
