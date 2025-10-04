@@ -171,4 +171,50 @@ RSpec.describe "Decks", type: :request do
       expect(response.body).to include('Topic')
     end
   end
+
+  describe 'PUT /decks/:id' do
+    let(:category) do
+      Category.create!(
+        title: 'Test category 1'
+      )
+    end
+
+    let!(:topic1) do
+      Topic.create!(
+        title: 'Test topic 1',
+        category_id: category.id
+      )
+    end
+
+    let(:topic2) do
+      Topic.create!(
+        title: 'Test topic 2',
+        category_id: category.id
+      )
+    end
+
+    let!(:deck) do
+      Deck.create!(
+        title: 'Test deck'
+      )
+    end
+
+    before do
+      topic1.decks << deck
+    end
+
+    it "updates a deck's title and/or topic when topic is valid and deck exists" do
+      put "/decks/#{deck.id}", params: {
+        deck: {
+          title: 'New title',
+          topic_id: topic2.id
+        }
+      }
+
+      expect(response).to redirect_to(deck)
+      deck.reload
+      expect(Deck.last.title).to eq('New title')
+      expect(Deck.last.topics.first.title).to eq('Test topic 2')
+    end
+  end
 end
