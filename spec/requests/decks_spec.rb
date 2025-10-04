@@ -73,7 +73,7 @@ RSpec.describe "Decks", type: :request do
 
   describe 'GET /decks/new' do
     it 'displays the title and topic labels' do
-      get '/topics/new'
+      get '/decks/new'
       expect(response.body).to include('Title')
       expect(response.body).to include('Topic')
     end
@@ -215,6 +215,38 @@ RSpec.describe "Decks", type: :request do
       deck.reload
       expect(Deck.last.title).to eq('New title')
       expect(Deck.last.topics.first.title).to eq('Test topic 2')
+    end
+
+    it 'responds with 400 status when topic id is not provided' do
+      put "/decks/#{deck.id}", params: {
+        deck: {
+          title: "New title"
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 400 status when topic id does not belong to a valid topic' do
+      put "/decks/#{deck.id}", params: {
+        deck: {
+          title: "New title",
+          category_id: 'nope'
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 404 status when deck id does not belong to an existing deck' do
+      put '/decks/nope', params: {
+        deck: {
+          title: 'New title',
+          topic_id: topic2.id
+        }
+      }
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

@@ -200,7 +200,7 @@ RSpec.describe "Topics", type: :request do
       expect(response).to have_http_status(:bad_request)
     end
 
-    it 'responds with 404 status when topic id does not belong to an existing trimester' do
+    it 'responds with 404 status when topic id does not belong to an existing topic' do
       put '/topics/nope', params: {
         topic: {
           title: 'New title',

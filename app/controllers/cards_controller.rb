@@ -14,7 +14,10 @@ class CardsController < ApplicationController
     end
   end
 
-  def new; end
+  def new
+    @card = Card.new
+    @decks = Deck.all
+  end
 
   def create; end
 

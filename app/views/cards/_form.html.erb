@@ -1,0 +1,31 @@
+<%= form_with(model: @card) do |form| %>
+  <% if @card.errors.any? %>
+    <h2><%= pluralize(@card.errors.count, "error") %> card not saved:</h2>
+
+    <ul>
+      <% @card.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title, {prompt: 'Enter card name'} %>
+  </div>
+
+  <div>
+    <%= form.label :deck_id, style: "display: block" %>
+    <%= form.select :deck_id, options_from_collection_for_select(@decks, :id, :title), { prompt: 'Select Deck' }%>
+  </div>
+
+  <div>
+    <%= form.label :face_content, style: "display: block" %>
+    <%= form.text_field :face_content %>
+  </div>
+
+  <div>
+    <%= form.label :back_content, style: "display: block" %>
+    <%= form.text_field :back_content %>
+  </div>
+<% end %>
