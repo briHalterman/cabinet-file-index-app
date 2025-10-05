@@ -209,7 +209,7 @@ RSpec.describe "Cards", type: :request do
         }
       }
 
-      expect(response).to redirect_to(deck_card_path(Card.last.decks.first.id, Card.last.id))
+      expect(response).to redirect_to(deck_card_path(deck.id, Card.last.id))
 
       expect(Card.last.title).to eq('New card')
       expect(Card.last.decks.first.title).to eq('Test deck')
@@ -234,6 +234,56 @@ RSpec.describe "Cards", type: :request do
       }
 
       expect(response).to have_http_status(:bad_request)
+    end
+  end
+
+  describe 'GET /decks/:id/cards/:id/edit' do
+    let!(:category) do
+      Category.create!(
+        title: 'Test category'
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: 'Test topic',
+        category_id: category.id
+      )
+    end
+
+    let!(:deck1) do
+      Deck.create!(
+        title: 'Test deck 1'
+      )
+    end
+
+    let!(:deck2) do
+      Deck.create!(
+        title: 'Test deck 2'
+      )
+    end
+
+    before do
+      topic.decks << deck1
+      topic.decks << deck2
+    end
+
+    let!(:card) do
+      Card.create!(
+        title: 'Test card',
+        face_content: 'Content on the face of the card',
+        back_content: 'Content on the back of the card'
+      )
+    end
+
+    before do
+      deck1.cards << card
+    end
+
+    xit 'responds with 200 OK' do
+      get "/decks/#{deck1.id}/cards/#{card.id}/edit"
+
+      expect(response).to have_http_status(:ok)
     end
   end
 end

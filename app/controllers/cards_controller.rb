@@ -15,12 +15,14 @@ class CardsController < ApplicationController
   end
 
   def new
-    @card = Card.new
+    @deck = Deck.find(params[:deck_id])
+    @card = @deck.cards.new
     @decks = Deck.all
   end
 
   def create
-    @card = Card.new(card_params)
+    @deck = Deck.find(params[:deck_id])
+    @card = @deck.cards.new(card_params)
     @decks = Deck.all
     deck = Deck.find_by(id: params[:card][:deck_id])
 
@@ -28,7 +30,7 @@ class CardsController < ApplicationController
       if params[:card][:deck_id].present? && deck && @card.save
         @card.decks << deck
 
-        format.html { redirect_to deck_card_path(deck.id, @card.id), notice: 'Card was successfully saved.' }
+        format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully saved.' }
         format.json { render :show, status: :created, location: :card }
       else
         format.html { render :new, status: :bad_request }

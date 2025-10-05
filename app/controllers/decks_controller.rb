@@ -24,11 +24,11 @@ class DecksController < ApplicationController
             format.json { render :show, status: :created, location: :deck }
           else
             format.html { render :new, status: :bad_request }
-            format.json { render json: @deck.errors, status: :bed_request }
+            format.json { render json: @deck.errors, status: :bad_request }
           end
         else
           format.html { render :new, status: :bad_request }
-          format.json { render json: @deck.errors, status: :bed_request }
+          format.json { render json: @deck.errors, status: :bad_request }
         end
       else
         format.html { render :new, status: :bad_request }
