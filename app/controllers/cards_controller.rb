@@ -39,9 +39,30 @@ class CardsController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    @deck = Deck.find(params[:deck_id])
+    @card = @deck.cards.find(params[:id])
+    @decks = Deck.all
+  end
 
-  def update; end
+  def update
+    @deck = Deck.find(params[:deck_id])
+    @card = @deck.cards.find(params[:id])
+    @decks = Deck.all
+    deck = Deck.find_by(id: params[:card][:deck_id])
+
+    respond_to do |format|
+      if params[:card][:deck_id].present? && deck && @card.update(card_params)
+        @card.decks = [deck]
+
+        format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully updated' }
+        format.json { render :show, status: :ok, location: :card }
+      else
+        format.html { render :edit, status: :bad_request }
+        format.json { render json: @card.errors, status: :bad_request }
+      end
+    end
+  end
 
   def destroy; end
 

@@ -52,7 +52,7 @@ class DecksController < ApplicationController
         @deck.topics = [topic]
 
         format.html { redirect_to @deck, notice: 'Deck was successfully updated.' }
-        format.json { render :show, status: :created, location: :deck }
+        format.json { render :show, status: :ok, location: :deck }
       else
         format.html { render :edit, status: :bad_request }
         format.json { render json: @deck.errors, status: :bad_request }

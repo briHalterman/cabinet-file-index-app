@@ -251,21 +251,14 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
-    let!(:deck1) do
+    let!(:deck) do
       Deck.create!(
         title: 'Test deck 1'
       )
     end
 
-    let!(:deck2) do
-      Deck.create!(
-        title: 'Test deck 2'
-      )
-    end
-
     before do
-      topic.decks << deck1
-      topic.decks << deck2
+      topic.decks << deck
     end
 
     let!(:card) do
@@ -277,13 +270,41 @@ RSpec.describe "Cards", type: :request do
     end
 
     before do
-      deck1.cards << card
+      deck.cards << card
     end
 
-    xit 'responds with 200 OK' do
-      get "/decks/#{deck1.id}/cards/#{card.id}/edit"
+    it 'responds with 200 OK' do
+      get "/decks/#{deck.id}/cards/#{card.id}/edit"
 
       expect(response).to have_http_status(:ok)
     end
+
+    it 'displays the title label' do
+      get "/decks/#{deck.id}/cards/#{card.id}/edit"
+
+      expect(response.body).to include('Title')
+    end
+
+    it 'displays the face content label' do
+      get "/decks/#{deck.id}/cards/#{card.id}/edit"
+
+      expect(response.body).to include('Face content')
+    end
+
+    it 'displays the back content label' do
+      get "/decks/#{deck.id}/cards/#{card.id}/edit"
+
+      expect(response.body).to include('Back content')
+    end
+
+    it 'displays the deck label' do
+      get "/decks/#{deck.id}/cards/#{card.id}"
+
+      expect(response.body).to include('Deck')
+    end
+  end
+
+  describe 'PUT /decks/:id/cards/:id' do
+    
   end
 end
