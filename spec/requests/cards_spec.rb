@@ -305,6 +305,94 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'PUT /decks/:id/cards/:id' do
-    
+    let!(:category) do
+      Category.create!(
+        title: 'Test category'
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: 'Test topic',
+        category_id: category.id
+      )
+    end
+
+    let!(:deck1) do
+      Deck.create!(
+        title: 'Test deck 1'
+      )
+    end
+
+    let!(:deck2) do
+      Deck.create!(
+        title: 'Test deck 2'
+      )
+    end
+
+    before do
+      topic.decks << deck1
+      topic.decks << deck2
+    end
+
+    let!(:card) do
+      Card.create!(
+        title: 'Test card',
+        face_content: 'Content on the face of the card',
+        back_content: 'Content on the back of the card'
+      )
+    end
+
+    before do
+      deck1.cards << card
+    end
+
+    it "updates a card's title, content, and/or deck when deck is valid and card exists" do
+      put "/decks/#{deck1.id}/cards/#{card.id}", params: {
+        card: {
+          title: 'New title',
+          deck_id: deck2.id,
+          face_content: 'Edited content on the face of the card',
+          back_content: 'Edited content on the back of the card'
+        }
+      }
+
+      expect(response).to redirect_to(deck_card_path(deck2.id, Card.last.id))
+      card.reload
+      expect(Card.last.title).to eq('New title')
+      expect(Card.last.decks.first.title).to eq('Test deck 2')
+    end
+
+    it 'responds with 400 status when deck id is not provided' do
+      put "/decks/#{deck1.id}/cards/#{card.id}", params: {
+        card: {
+          title: 'New title'
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 400 status when deck id does not belong to a valid deck' do
+      put "/decks/#{deck1.id}/cards/#{card.id}", params: {
+        card: {
+          title: 'New title',
+          deck_id: 'nope'
+        }
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'responds with 404 status when card id does not belong to an existing card' do
+      put "/decks/#{deck1.id}/cards/nope", params: {
+        card: {
+          title: 'New title',
+          deck_id: deck2.id
+        }
+      }
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 end

@@ -55,7 +55,7 @@ class CardsController < ApplicationController
       if params[:card][:deck_id].present? && deck && @card.update(card_params)
         @card.decks = [deck]
 
-        format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully updated' }
+        format.html { redirect_to deck_card_path(deck, @card), notice: 'Card was successfully updated' }
         format.json { render :show, status: :ok, location: :card }
       else
         format.html { render :edit, status: :bad_request }

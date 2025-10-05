@@ -173,7 +173,7 @@ RSpec.describe "Decks", type: :request do
   end
 
   describe 'PUT /decks/:id' do
-    let(:category) do
+    let!(:category) do
       Category.create!(
         title: 'Test category 1'
       )
