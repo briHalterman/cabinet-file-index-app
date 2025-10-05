@@ -1,0 +1,25 @@
+<%= form_with(model: @deck) do |form| %>
+  <% if @deck.errors.any? %>
+    <h2><%= pluralize(@deck.errors.count, "error") %> deck not saved:</h2>
+
+    <ul>
+      <% @deck.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title, {prompt: 'Enter deck name'} %>
+  </div>
+
+  <div>
+    <%= form.label :topic_id, style: "display: block" %>
+    <%= form.select :topic_id, options_from_collection_for_select(@topics, :id, :title), { prompt: 'Select Topic' } %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
