@@ -1,6 +1,6 @@
 class DecksController < ApplicationController
-  before_action: :require_user
-  
+  before_action :require_user
+
   def show
     @deck = Deck.find(params[:id])
     @cards = @deck.cards
