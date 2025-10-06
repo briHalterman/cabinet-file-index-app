@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   def require_user
     if session[:role] != 'user'
       flash[:alert] = 'You do not have access tot that page'
-        redirect_do login_path
+        redirect_to login_path
       end
   end
 end

@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
-  def new
-  end
+  def new; end
 
   def create
     user = User.find_by(username: params[:username])
@@ -21,6 +20,9 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    
+    session.delete(:user_id)
+    session.delete(:role)
+    flash[:notice] = 'You have successfully logged out.'
+    redirect_to login_path, status: :see_other
   end
 end
