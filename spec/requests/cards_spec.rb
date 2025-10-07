@@ -79,6 +79,13 @@ RSpec.describe "Cards", type: :request do
         end
       end
     end
+
+    context 'user is logged in' do
+      it 'it returns a 403 forbidden status' do
+        get '/cards'
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe "GET /decks/:id/cards/:id?side=face" do
@@ -133,6 +140,13 @@ RSpec.describe "Cards", type: :request do
       it 'returns the content on the face of the card' do
         get "/decks/#{deck.id}/cards/#{card.id}?side=face"
         expect(response.body).to include('This is the content on the face (lined) of the index card.')
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/decks/#{deck.id}/cards/#{card.id}?side=face"
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -191,6 +205,13 @@ RSpec.describe "Cards", type: :request do
         expect(response.body).to include('The back side of the card is the blank side.')
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/decks/#{deck.id}/cards/#{card.id}?side=back"
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'GET /decks/:id/cards/new' do
@@ -242,10 +263,16 @@ RSpec.describe "Cards", type: :request do
         expect(response.body).to include('Deck')
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/decks/#{deck.id}/cards/new"
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'POST /decks/:id/cards' do
-
     let(:category) do
       Category.create!(
         title: 'Test category'
@@ -318,6 +345,19 @@ RSpec.describe "Cards", type: :request do
         }
 
         expect(response).to have_http_status(:bad_request)
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        post "/decks/#{deck.id}/cards", params: {
+          card: {
+            title: 'New card',
+            deck_id: deck.id
+          }
+        }
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -404,6 +444,13 @@ RSpec.describe "Cards", type: :request do
         expect(response.body).to include('Deck')
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/decks/#{deck.id}/cards/#{card.id}/edit"
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'PUT /decks/:id/cards/:id' do
@@ -464,7 +511,7 @@ RSpec.describe "Cards", type: :request do
           password: 'secret'
         }
       end
-      
+
       it "updates a card's title, content, and/or deck when deck is valid and card exists" do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
@@ -511,6 +558,17 @@ RSpec.describe "Cards", type: :request do
         }
 
         expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        put "/decks/#{deck1.id}/cards/#{card.id}", params: {
+          card: {
+            title: 'New title',
+            deck_id: deck2.id
+          }
+        }
       end
     end
   end

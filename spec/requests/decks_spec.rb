@@ -86,6 +86,13 @@ RSpec.describe "Decks", type: :request do
         end
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/decks/#{deck.id}"
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'GET /decks/new' do
@@ -109,6 +116,13 @@ RSpec.describe "Decks", type: :request do
         get '/decks/new'
         expect(response.body).to include('Title')
         expect(response.body).to include('Topic')
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get '/decks/new'
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -178,6 +192,17 @@ RSpec.describe "Decks", type: :request do
         expect(response).to have_http_status(:bad_request)
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        post '/decks', params: {
+          deck: {
+            title: 'New title',
+            topic_id: topic.id
+          }
+        }
+      end
+    end
   end
 
   describe 'GET /decks/:id/edit' do
@@ -236,6 +261,13 @@ RSpec.describe "Decks", type: :request do
         get "/decks/#{deck.id}/edit"
 
         expect(response.body).to include('Topic')
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/decks/#{deck.id}/edit"
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -331,6 +363,17 @@ RSpec.describe "Decks", type: :request do
         }
 
         expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        put "/decks/#{deck.id}", params: {
+          deck: {
+            title: 'New title',
+            topic_id: topic2.id
+          }
+        }
       end
     end
   end

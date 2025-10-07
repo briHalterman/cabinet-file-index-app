@@ -53,7 +53,6 @@ RSpec.describe "Dashboard", type: :request do
     end
 
     context 'user is logged in' do
-
       let!(:user) do
         User.create!(
           username: 'User',
@@ -102,6 +101,13 @@ RSpec.describe "Dashboard", type: :request do
 
         expect(response.body).to include("/categories/#{@category1.id}")
         expect(response.body).to include("/categories/#{@category2.id}")
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get '/dashboard'
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

@@ -58,6 +58,13 @@ RSpec.describe "Categories", type: :request do
         end
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get '/categories'
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'GET/categories/:id', type: :request do
@@ -82,7 +89,7 @@ RSpec.describe "Categories", type: :request do
           password: 'secret'
         }
       end
-      
+
       it 'responds with 200 OK' do
         get "/categories/#{category.id}"
 
@@ -123,6 +130,13 @@ RSpec.describe "Categories", type: :request do
           expect(response.body).to include("topics/#{topic1.id}")
           expect(response.body).to include("topics/#{topic2.id}")
         end
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/categories/#{category.id}"
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

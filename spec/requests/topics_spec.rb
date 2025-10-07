@@ -47,36 +47,44 @@ RSpec.describe "Topics", type: :request do
         let!(:deck1) do
           Deck.create!(
             title: 'Test Deck 1',
-            )
-          end
+          )
+        end
 
-          let!(:deck2) do
-            Deck.create!(
-              title: 'Test Deck 2',
-            )
-          end
+        let!(:deck2) do
+          Deck.create!(
+            title: 'Test Deck 2',
+          )
+        end
 
-          before do
-            topic.decks << deck1
-            topic.decks << deck2
-          end
+        before do
+          topic.decks << deck1
+          topic.decks << deck2
+        end
 
-          it "returns a page containing titles of all the topic's decks" do
-            get "/topics/#{topic.id}"
+        it "returns a page containing titles of all the topic's decks" do
+          get "/topics/#{topic.id}"
 
-            expect(response.body).to include('Test Deck 1')
-            expect(response.body).to include('Test Deck 2')
-          end
+          expect(response.body).to include('Test Deck 1')
+          expect(response.body).to include('Test Deck 2')
+        end
 
-          it 'links each deck to the deck show page' do
-            get "/topics/#{topic.id}"
+        it 'links each deck to the deck show page' do
+          get "/topics/#{topic.id}"
 
-            expect(response.body).to include("decks/#{deck1.id}")
-            expect(response.body).to include("decks/#{deck2.id}")
-          end
+          expect(response.body).to include("decks/#{deck1.id}")
+          expect(response.body).to include("decks/#{deck2.id}")
         end
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/topics/#{topic.id}"
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
 
   describe 'GET /topics/new' do
     context 'user is logged in' do
@@ -99,6 +107,13 @@ RSpec.describe "Topics", type: :request do
         get '/topics/new'
         expect(response.body).to include('Title')
         expect(response.body).to include('Category')
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get '/topics/new'
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -161,6 +176,19 @@ RSpec.describe "Topics", type: :request do
         expect(response).to have_http_status(:bad_request)
       end
     end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        post "/topics", params: {
+          topic: {
+            title: "New topic",
+            category_id: category.id
+          }
+        }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'GET /topics/:id/edit' do
@@ -207,8 +235,14 @@ RSpec.describe "Topics", type: :request do
 
       it 'displays the category label' do
         get "/topics/#{topic.id}/edit"
-
         expect(response.body).to include('Category')
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        get "/topics/#{topic.id}/edit"
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -248,7 +282,7 @@ RSpec.describe "Topics", type: :request do
           password: 'secret'
         }
       end
-      
+
       it "updates a topic's title and/or category when category is valid and topic exists" do
         put "/topics/#{topic.id}", params: {
           topic: {
@@ -293,6 +327,19 @@ RSpec.describe "Topics", type: :request do
         }
 
         expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        put "/topics/#{topic.id}", params: {
+          topic: {
+            title: "New title",
+            category_id: category2.id
+          }
+        }
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
