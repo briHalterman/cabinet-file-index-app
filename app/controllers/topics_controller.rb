@@ -1,4 +1,6 @@
 class TopicsController < ApplicationController
+  before_action :require_user
+  
   def show
     @topic = Topic.find(params[:id])
     @decks = @topic.decks

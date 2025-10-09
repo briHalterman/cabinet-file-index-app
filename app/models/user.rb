@@ -1,5 +1,5 @@
-class User < ApplicationRecord;
-  def full_name
-    "#{first_name} #{last_name}"
-  end
+class User < ApplicationRecord
+  has_secure_password
+  validates :role, presence: true
+  validates :role, inclusion: { in: [ "admin", "user" ] }
 end

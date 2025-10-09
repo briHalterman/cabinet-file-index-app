@@ -1,4 +1,6 @@
 class CardsController < ApplicationController
+  before_action :require_user
+  
   def index
     @cards = Card.all
   end
