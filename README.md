@@ -346,3 +346,10 @@ erDiagram
 * Deployment instructions
 
 * ...
+
+---
+
+#### For manual testing
+username: 'User'
+password: 'secret'
+role: 'user'
