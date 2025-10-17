@@ -111,7 +111,7 @@ users:
 
 class Deck < ApplicationRecord
   has_many :card_decks
-  has_many :cards, through :card_decks
+  has_many :cards, through: :card_decks
 
   has_many :deck_topics
   has_many :topics, through :deck_topics
@@ -192,8 +192,9 @@ topics:
 erDiagram
   USER {
     integer id PK
-    string email
+    string username
     string password
+    string role
     datetime created_at
     datetime updated_at
   }
@@ -282,23 +283,47 @@ erDiagram
 - ~~Edit topic~~
 - Delete topic
 <br>
-- View form to create new deck
-- Create new deck
+- ~~View form to create new deck~~
+- ~~Create new deck~~
 - ~~View a list of cards in a deck~~
-- View form to edit deck
-- Edit deck
+- ~~View form to edit deck~~
+- ~~Edit deck~~
 - Delete deck
 <br>
-- View form to create new index card
-- Create new index card
+- ~~View form to create new index card~~
+- ~~Create new index card~~
 - ~~View all cards~~
 - ~~View front of card~~
 - ~~View back of card~~
-- View form to edit index card
-- Edit index card
+- ~~View form to edit index card~~
+- ~~Edit index card~~
 - Delete index card
 
 (* Non-resourceful Route)
+
+## Associate Decks and Cards with the Logged-In User
+### Mentor meeting notes
+- Add user_id to decks
+  - Create a migration that add the new column
+- add belongs to user in the deck model
+- add has_many decks to user model
+- in CardsController
+   - in show method, current_user.decks.includes(:cards).find_by()
+   -  in create method, modify you card_params method to include the user: current_user
+
+## Getting Started
+
+## Stretch Goals (and polishing)
+
+- [ ] Associate decks and cards with the logged-in user
+- [ ] Finish implementing CRUD by adding ability to delete
+- [ ] Debug flash messages
+- [ ] Views
+- [ ] Specs
+- [ ] Styling
+- [ ] Deploy
+
+## Reflection
 
 ---
 
