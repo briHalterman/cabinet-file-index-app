@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_06_182844) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_17_194223) do
   create_table "card_decks", force: :cascade do |t|
     t.integer "deck_id"
     t.integer "card_id"
@@ -47,6 +47,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_06_182844) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "topics", force: :cascade do |t|
@@ -65,4 +66,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_06_182844) do
     t.datetime "updated_at", null: false
     t.index ["username"], name: "index_users_on_username", unique: true
   end
+
+  add_foreign_key "decks", "users"
 end
