@@ -1,4 +1,4 @@
-<%= form_with(model: [@deck, @card]) do |form| %>
+<%= form_with model: [@deck, @card] do |form| %>
   <% if @card.errors.any? %>
     <h2><%= pluralize(@card.errors.count, "error") %> card not saved:</h2>
 
@@ -16,7 +16,7 @@
 
   <div>
     <%= form.label :deck_id, style: "display: block" %>
-    <%= form.select :deck_id, options_from_collection_for_select(@decks, :id, :title, @deck.id), { prompt: 'Select Deck' }%>
+    <%= form.collection_select :deck_ids, @decks, :id, :title, { prompt: 'Select Deck' }, { multiple: true } %>
   </div>
 
   <div>

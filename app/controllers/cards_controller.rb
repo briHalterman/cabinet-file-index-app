@@ -1,5 +1,6 @@
 class CardsController < ApplicationController
   before_action :require_user
+  before_action :set_card, only: %i[show edit update destroy]
 
   def index
     @current_user = User.find_by(id: session[:user_id])
@@ -22,14 +23,14 @@ class CardsController < ApplicationController
   def new
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
-    @card = @deck.cards.new
+    @card = @deck.cards.build
     @decks = @current_user.decks
   end
 
   def create
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
-    @card = @deck.cards.new(card_params)
+    @card = @deck.cards.build(card_params)
     @decks = @current_user.decks
     deck = @current_user.decks.find_by(id: params[:card][:deck_id])
     # user: current_user
@@ -50,8 +51,9 @@ class CardsController < ApplicationController
 
   def edit
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find_by(id: params[:id])
-    @card = @deck.cards.find_by(id: params[:id])
+    @deck = @current_user.decks.includes(:cards).find_by(id: params[:deck_id])
+    # debugger
+    # @card = @deck.cards.find(params[:id])
     @decks = @current_user.decks
   end
 
@@ -81,5 +83,9 @@ class CardsController < ApplicationController
 
   def card_params
     params.require(:card).permit(:title, :face_content, :back_content)
+  end
+
+  def set_card
+    @card = Card.find(params[:id])
   end
 end
