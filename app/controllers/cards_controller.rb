@@ -10,7 +10,7 @@ class CardsController < ApplicationController
   def show
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
-    @card = @deck.cards.find(params[:id])
+    @card = @deck.cards.find_by(id: params[:id])
 
     if params[:side] == "face"
       @content = @card.face_content
@@ -50,8 +50,8 @@ class CardsController < ApplicationController
 
   def edit
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
-    @card = @deck.cards.find(params[:id])
+    @deck = @current_user.decks.includes(:cards).find_by(id: params[:id])
+    @card = @deck.cards.find_by(id: params[:id])
     @decks = @current_user.decks
   end
 

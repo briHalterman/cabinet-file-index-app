@@ -131,6 +131,10 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    before do
+      deck.cards << card
+    end
+
     context 'user is logged in' do
       before do
         post '/login', params: {
@@ -195,6 +199,10 @@ RSpec.describe "Cards", type: :request do
         back_content: 'The back side of the card is the blank side.',
         user: user
       )
+    end
+
+    before do
+      deck.cards << card
     end
 
     context 'user is logged in' do
@@ -456,7 +464,7 @@ RSpec.describe "Cards", type: :request do
       end
 
       it 'displays the deck label' do
-        get "/decks/#{deck.id}/cards/#{card.id}"
+        get "/decks/#{deck.id}/cards/#{card.id}/edit"
 
         expect(response.body).to include('Deck')
       end
