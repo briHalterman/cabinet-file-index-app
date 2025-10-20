@@ -2,6 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "Decks", type: :request do
   describe 'GET/decks/:id', type: :request do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -18,6 +26,7 @@ RSpec.describe "Decks", type: :request do
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
+        user: user
       )
     end
 
@@ -26,14 +35,6 @@ RSpec.describe "Decks", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -57,12 +58,14 @@ RSpec.describe "Decks", type: :request do
         let!(:card1) do
           Card.create!(
             title: 'Test Card 1',
+            user: user
           )
         end
 
         let!(:card2) do
           Card.create!(
             title: 'Test Card 2',
+            user: user
           )
         end
 
@@ -96,15 +99,15 @@ RSpec.describe "Decks", type: :request do
   end
 
   describe 'GET /decks/new' do
-    context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
 
+    context 'user is logged in' do
       before do
         post '/login', params: {
           username: user.username,
@@ -128,6 +131,14 @@ RSpec.describe "Decks", type: :request do
   end
 
   describe 'POST /decks' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -142,14 +153,6 @@ RSpec.describe "Decks", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -161,7 +164,8 @@ RSpec.describe "Decks", type: :request do
         post '/decks', params: {
           deck: {
             title: 'New deck',
-            topic_id: topic.id
+            topic_id: topic.id,
+            # user: user
           }
         }
 
@@ -206,6 +210,14 @@ RSpec.describe "Decks", type: :request do
   end
 
   describe 'GET /decks/:id/edit' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -221,7 +233,8 @@ RSpec.describe "Decks", type: :request do
 
     let!(:deck) do
       Deck.create!(
-        title: 'Test deck'
+        title: 'Test deck',
+        user: user
       )
     end
 
@@ -230,14 +243,6 @@ RSpec.describe "Decks", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -273,6 +278,14 @@ RSpec.describe "Decks", type: :request do
   end
 
   describe 'PUT /decks/:id' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category 1'
@@ -295,7 +308,8 @@ RSpec.describe "Decks", type: :request do
 
     let!(:deck) do
       Deck.create!(
-        title: 'Test deck'
+        title: 'Test deck',
+        user: user
       )
     end
 
@@ -304,14 +318,6 @@ RSpec.describe "Decks", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,

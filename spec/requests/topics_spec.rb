@@ -47,12 +47,14 @@ RSpec.describe "Topics", type: :request do
         let!(:deck1) do
           Deck.create!(
             title: 'Test Deck 1',
+            user: user
           )
         end
 
         let!(:deck2) do
           Deck.create!(
             title: 'Test Deck 2',
+            user: user
           )
         end
 

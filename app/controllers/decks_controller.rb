@@ -2,17 +2,20 @@ class DecksController < ApplicationController
   before_action :require_user
 
   def show
-    @deck = Deck.find(params[:id])
-    @cards = @deck.cards
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.find(params[:id])
+    @cards = @current_user.cards
   end
 
   def new
-    @deck = Deck.new
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.new
     @topics = Topic.all
   end
 
   def create
-    @deck = Deck.new(deck_params)
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.new(deck_params)
     @topics = Topic.all
 
     respond_to do |format|
