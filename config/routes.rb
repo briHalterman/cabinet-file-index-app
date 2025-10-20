@@ -18,6 +18,8 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: 'dashboard#index'
 
+  resources :users
+
   resources :categories
   resources :topics
   resources :decks do
