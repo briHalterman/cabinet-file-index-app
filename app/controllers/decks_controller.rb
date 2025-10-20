@@ -10,13 +10,13 @@ class DecksController < ApplicationController
   def new
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.new
-    @topics = Topic.all
+    @topics = @current_user.topics
   end
 
   def create
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.new(deck_params)
-    @topics = Topic.all
+    @topics = @current_user.topics
 
     respond_to do |format|
       if params[:deck][:topic_id].present?
@@ -43,14 +43,16 @@ class DecksController < ApplicationController
   end
 
   def edit
-    @deck = Deck.find(params[:id])
-    @topics = Topic.all
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:id])
+    @topics = @current_user.topics
   end
 
   def update
-    @deck = Deck.find(params[:id])
-    @topics = Topic.all
-    topic = Topic.find_by(id: params[:deck][:topic_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:id])
+    @topics = @current_user.topics
+    topic = @current_user.topics.find_by(id: params[:deck][:topic_id])
 
     respond_to do |format|
       if params[:deck][:topic_id].present? && topic && @deck.update(deck_params)

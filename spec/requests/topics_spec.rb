@@ -2,6 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "Topics", type: :request do
   describe 'GET/topics/:id', type: :request do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+      end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -11,19 +19,12 @@ RSpec.describe "Topics", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test Topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -194,6 +195,14 @@ RSpec.describe "Topics", type: :request do
   end
 
   describe 'GET /topics/:id/edit' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: "Test category"
@@ -203,19 +212,12 @@ RSpec.describe "Topics", type: :request do
     let!(:topic) do
       Topic.create!(
         title: "Test Topic",
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -250,6 +252,14 @@ RSpec.describe "Topics", type: :request do
   end
 
   describe 'PUT /topics/:id' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category1) do
       Category.create!(
         title: "Test category 1"
@@ -265,19 +275,12 @@ RSpec.describe "Topics", type: :request do
     let!(:topic) do
       Topic.create!(
         title: "Test topic",
-        category_id: category1.id
+        category_id: category1.id,
+        user: user
       )
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,

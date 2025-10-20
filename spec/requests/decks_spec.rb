@@ -19,7 +19,8 @@ RSpec.describe "Decks", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test Topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
@@ -148,7 +149,8 @@ RSpec.describe "Decks", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
@@ -227,7 +229,8 @@ RSpec.describe "Decks", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
@@ -295,14 +298,16 @@ RSpec.describe "Decks", type: :request do
     let!(:topic1) do
       Topic.create!(
         title: 'Test topic 1',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
     let(:topic2) do
       Topic.create!(
         title: 'Test topic 2',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 

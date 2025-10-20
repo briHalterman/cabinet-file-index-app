@@ -106,14 +106,16 @@ RSpec.describe "Categories", type: :request do
         let!(:topic1) do
           Topic.create!(
             title: 'Test Topic 1',
-            category_id: category.id
+            category_id: category.id,
+            user: user
           )
         end
 
         let!(:topic2) do
           Topic.create!(
             title: 'Test Topic 2',
-            category_id: category.id
+            category_id: category.id,
+            user: user
           )
         end
 
