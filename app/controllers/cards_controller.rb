@@ -2,11 +2,14 @@ class CardsController < ApplicationController
   before_action :require_user
 
   def index
-    @cards = Card.all
+    @current_user = User.find_by(id: session[:user_id])
+    # @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    @cards = @current_user.cards
   end
 
   def show
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.find(params[:id])
 
     if params[:side] == "face"
@@ -17,16 +20,20 @@ class CardsController < ApplicationController
   end
 
   def new
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.new
-    @decks = Deck.all
+    @decks = @current_user.decks
   end
 
   def create
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.new(card_params)
-    @decks = Deck.all
-    deck = Deck.find_by(id: params[:card][:deck_id])
+    @decks = @current_user.decks
+    deck = @current_user.decks.find_by(id: params[:card][:deck_id])
+    # user: current_user
+    @card.user = @current_user
 
     respond_to do |format|
       if params[:card][:deck_id].present? && deck && @card.save
@@ -42,16 +49,18 @@ class CardsController < ApplicationController
   end
 
   def edit
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.find(params[:id])
-    @decks = Deck.all
+    @decks = @current_user.decks
   end
 
   def update
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.find(params[:id])
-    @decks = Deck.all
-    deck = Deck.find_by(id: params[:card][:deck_id])
+    @decks = @current_user.decks
+    deck = @current_user.decks.find_by(id: params[:card][:deck_id])
 
     respond_to do |format|
       if params[:card][:deck_id].present? && deck && @card.update(card_params)

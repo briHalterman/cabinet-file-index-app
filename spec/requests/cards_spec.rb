@@ -39,7 +39,8 @@ RSpec.describe "Cards", type: :request do
 
         let!(:deck) do
           Deck.create!(
-            title: 'Test Deck'
+            title: 'Test Deck',
+            user: user
           )
         end
 
@@ -49,13 +50,15 @@ RSpec.describe "Cards", type: :request do
 
         let!(:card1) do
           Card.create!(
-            title: 'Test Card 1'
+            title: 'Test Card 1',
+            user: user
           )
         end
 
         let!(:card2) do
           Card.create!(
-            title: 'Test Card 2'
+            title: 'Test Card 2',
+            user: user
           )
         end
 
@@ -80,7 +83,7 @@ RSpec.describe "Cards", type: :request do
       end
     end
 
-    context 'user is logged in' do
+    context 'user is not logged in' do
       it 'it returns a 403 forbidden status' do
         get '/cards'
         expect(response).to have_http_status(:forbidden)
@@ -89,6 +92,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe "GET /decks/:id/cards/:id?side=face" do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -105,6 +116,7 @@ RSpec.describe "Cards", type: :request do
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
+        user: user
       )
     end
 
@@ -112,19 +124,12 @@ RSpec.describe "Cards", type: :request do
       Card.create!(
         title: 'Test Card',
         face_content: 'This is the content on the face (lined) of the index card.',
-        back_content: 'The back side of the card is the blank side.'
+        back_content: 'The back side of the card is the blank side.',
+        user: user
       )
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -152,6 +157,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe "GET /decks/:id/cards/:id?side=back" do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -168,6 +181,7 @@ RSpec.describe "Cards", type: :request do
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
+        user: user
       )
     end
 
@@ -175,19 +189,12 @@ RSpec.describe "Cards", type: :request do
       Card.create!(
         title: 'Test Card',
         face_content: 'This is the content on the face (lined) of the index card.',
-        back_content: 'The back side of the card is the blank side.'
+        back_content: 'The back side of the card is the blank side.',
+        user: user
       )
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -215,6 +222,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'GET /decks/:id/cards/new' do
+    let!(:user) do
+      User.create(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -231,6 +246,7 @@ RSpec.describe "Cards", type: :request do
     let!(:deck) do
       Deck.create!(
         title: 'Test deck',
+        user: user
       )
     end
 
@@ -239,14 +255,6 @@ RSpec.describe "Cards", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -273,6 +281,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'POST /decks/:id/cards' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let(:category) do
       Category.create!(
         title: 'Test category'
@@ -288,7 +304,8 @@ RSpec.describe "Cards", type: :request do
 
     let!(:deck) do
       Deck.create!(
-        title: 'Test deck'
+        title: 'Test deck',
+        user: user
       )
     end
 
@@ -297,14 +314,6 @@ RSpec.describe "Cards", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -363,6 +372,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'GET /decks/:id/cards/:id/edit' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -378,7 +395,8 @@ RSpec.describe "Cards", type: :request do
 
     let!(:deck) do
       Deck.create!(
-        title: 'Test deck 1'
+        title: 'Test deck 1',
+        user: user
       )
     end
 
@@ -390,7 +408,8 @@ RSpec.describe "Cards", type: :request do
       Card.create!(
         title: 'Test card',
         face_content: 'Content on the face of the card',
-        back_content: 'Content on the back of the card'
+        back_content: 'Content on the back of the card',
+        user: user
       )
     end
 
@@ -399,14 +418,6 @@ RSpec.describe "Cards", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -454,6 +465,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'PUT /decks/:id/cards/:id' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -469,13 +488,15 @@ RSpec.describe "Cards", type: :request do
 
     let!(:deck1) do
       Deck.create!(
-        title: 'Test deck 1'
+        title: 'Test deck 1',
+        user: user
       )
     end
 
     let!(:deck2) do
       Deck.create!(
-        title: 'Test deck 2'
+        title: 'Test deck 2',
+        user: user
       )
     end
 
@@ -488,7 +509,8 @@ RSpec.describe "Cards", type: :request do
       Card.create!(
         title: 'Test card',
         face_content: 'Content on the face of the card',
-        back_content: 'Content on the back of the card'
+        back_content: 'Content on the back of the card',
+        user: user
       )
     end
 
@@ -497,14 +519,6 @@ RSpec.describe "Cards", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
