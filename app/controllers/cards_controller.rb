@@ -14,6 +14,10 @@ class CardsController < ApplicationController
     @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
     @card = @deck.cards.find_by(id: params[:id])
 
+    if @card.user_id != @current_user.id
+      redirect_to root_path
+    end
+
     if params[:side] == "face"
       @content = @card.face_content
     elsif params[:side] == "back"
@@ -69,8 +73,9 @@ class CardsController < ApplicationController
     @card.user = @current_user
     # debugger
     respond_to do |format|
-      if params[:card][:deck_ids].reject(&:blank?).any? && @card.update(card_params)
+      if params[:card][:deck_ids]&.reject(&:blank?)&.any? && @card.update(card_params)
         @card.decks = @current_user.decks.where(id: card_params[:deck_ids])
+        @deck = @card.decks.first
 
         format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully updated' }
         format.json { render :show, status: :ok, location: @card }

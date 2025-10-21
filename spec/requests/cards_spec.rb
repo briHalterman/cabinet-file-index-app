@@ -545,7 +545,7 @@ RSpec.describe "Cards", type: :request do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
             title: 'New title',
-            deck_id: deck2.id,
+            deck_ids: [deck2.id],
             face_content: 'Edited content on the face of the card',
             back_content: 'Edited content on the back of the card'
           }
@@ -571,18 +571,18 @@ RSpec.describe "Cards", type: :request do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
             title: 'New title',
-            deck_id: 'nope'
+            deck_ids: ['nope']
           }
         }
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(:not_found)
       end
 
       it 'responds with 404 status when card id does not belong to an existing card' do
         put "/decks/#{deck1.id}/cards/nope", params: {
           card: {
             title: 'New title',
-            deck_id: deck2.id
+            deck_ids: [deck2.id]
           }
         }
 
@@ -595,7 +595,7 @@ RSpec.describe "Cards", type: :request do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
             title: 'New title',
-            deck_id: deck2.id
+            deck_ids: [deck2.id]
           }
         }
       end
