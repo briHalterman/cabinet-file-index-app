@@ -3,6 +3,18 @@ require 'rails_helper'
 RSpec.describe "Dashboard", type: :request do
   describe "GET /dashboard" do
     before do
+      @user = User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+
+      @other_user = User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+
       @category1 = Category.create!(
         title: "Test Category 1"
       )
@@ -13,57 +25,63 @@ RSpec.describe "Dashboard", type: :request do
 
       @topic1 = Topic.create!(
         title: "Test Topic 1",
-        category_id: @category1.id
+        category_id: @category1.id,
+        user: @user
       )
 
       @topic2 = Topic.create!(
         title: "Test Topic 2",
-        category_id: @category1.id
+        category_id: @category1.id,
+        user: @user
       )
 
       @topic3 = Topic.create!(
         title: "Test Topic 3",
-        category_id: @category1.id
+        category_id: @category1.id,
+        user: @user
       )
 
       @topic4 = Topic.create!(
         title: "Test Topic 2",
-        category_id: @category1.id
+        category_id: @category1.id,
+        user: @user
       )
 
       @topic5 = Topic.create!(
         title: "Test Topic 5",
-        category_id: @category2.id
+        category_id: @category2.id,
+        user: @user
       )
 
       @topic6 = Topic.create!(
         title: "Test Topic 6",
-        category_id: @category2.id
+        category_id: @category2.id,
+        user: @user
       )
 
       @topic7 = Topic.create!(
         title: "Test Topic 7",
-        category_id: @category2.id
+        category_id: @category2.id,
+        user: @user
       )
 
       @topic8 = Topic.create!(
         title: "Test Topic 8",
-        category_id: @category2.id
+        category_id: @category2.id,
+        user: @user
+      )
+
+      @other_topic = Topic.create!(
+        title: "Misfit",
+        category_id: @category1.id,
+        user: @other_user
       )
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
-          username: user.username,
+          username: @user.username,
           password: 'secret'
         }
       end
@@ -101,6 +119,12 @@ RSpec.describe "Dashboard", type: :request do
 
         expect(response.body).to include("/categories/#{@category1.id}")
         expect(response.body).to include("/categories/#{@category2.id}")
+      end
+
+      it "does not display topics belonging to another user" do
+        get "/dashboard"
+
+        expect(response.body).not_to include("/topics/#{@other_topic.id}")
       end
     end
 

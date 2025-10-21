@@ -5,7 +5,7 @@
     <li>
       <h2><%= "#{category.title}" %></h2>
       <ul>
-        <% topics = category.topics.order(updated_at: :desc).limit(3) %>
+        <% topics = category.topics.where(user_id: @current_user.id).order(updated_at: :desc).limit(3) %>
         <% topics.each do |topic| %>
           <li>
             <a href="<%= topic_path(topic) %>"><%= topic.title %></a>

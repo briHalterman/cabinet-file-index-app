@@ -11,6 +11,14 @@ RSpec.describe "Cards", type: :request do
         )
       end
 
+      let!(:other_user) do
+        User.create!(
+          username: 'Other',
+          password: 'secret',
+          role: 'user'
+        )
+      end
+
       before do
         post '/login', params: {
           username: user.username,
@@ -33,41 +41,75 @@ RSpec.describe "Cards", type: :request do
         let!(:topic) do
           Topic.create!(
             title: 'Test Topic',
-            category_id: category.id
+            category_id: category.id,
+            user: user
+          )
+        end
+
+        let!(:other_topic) do
+          Topic.create!(
+            title: 'Misfit Topic',
+            category_id: category.id,
+            user: other_user
           )
         end
 
         let!(:deck) do
           Deck.create!(
-            title: 'Test Deck'
+            title: 'Test Deck',
+            user: user
+          )
+        end
+
+        let!(:other_deck) do
+          Deck.create!(
+            title: 'Misfit Deck',
+            user: other_user
           )
         end
 
         before do
           topic.decks << deck
+          other_topic.decks << other_deck
         end
 
         let!(:card1) do
           Card.create!(
-            title: 'Test Card 1'
+            title: 'Test Card 1',
+            user: user
           )
         end
 
         let!(:card2) do
           Card.create!(
-            title: 'Test Card 2'
+            title: 'Test Card 2',
+            user: user
+          )
+        end
+
+        let(:other_card) do
+          Card.create!(
+            title: 'Misfit Card',
+            user: other_user
           )
         end
 
         before do
           deck.cards << card1
           deck.cards << card2
+          other_deck.cards << other_card
         end
 
         it 'returns a page containing titles of all cards' do
           get '/cards'
           expect(response.body).to include('Test Card 1')
           expect(response.body).to include('Test Card 2')
+        end
+
+        it 'does not display cards belonging to another user' do
+          get '/cards'
+
+          expect(response.body).not_to include('Other Card')
         end
       end
 
@@ -80,7 +122,7 @@ RSpec.describe "Cards", type: :request do
       end
     end
 
-    context 'user is logged in' do
+    context 'user is not logged in' do
       it 'it returns a 403 forbidden status' do
         get '/cards'
         expect(response).to have_http_status(:forbidden)
@@ -89,6 +131,22 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe "GET /decks/:id/cards/:id?side=face" do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -98,33 +156,60 @@ RSpec.describe "Cards", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test Topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
       )
     end
 
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
+        user: user
       )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user,
+      )
+    end
+
+    before do
+      topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     let!(:card) do
       Card.create!(
         title: 'Test Card',
         face_content: 'This is the content on the face (lined) of the index card.',
-        back_content: 'The back side of the card is the blank side.'
+        back_content: 'The back side of the card is the blank side.',
+        user: user
       )
     end
 
-    context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+    end
 
+    before do
+      deck.cards << card
+      other_deck.cards << other_card
+    end
+
+    context 'user is logged in' do
       before do
         post '/login', params: {
           username: user.username,
@@ -141,6 +226,11 @@ RSpec.describe "Cards", type: :request do
         get "/decks/#{deck.id}/cards/#{card.id}?side=face"
         expect(response.body).to include('This is the content on the face (lined) of the index card.')
       end
+
+      it "does not allow access to another user's card" do
+        get "/decks/#{deck.id}/cards/#{other_card.id}?side=face"
+        expect(response).to redirect_to(dashboard_path)
+      end
     end
 
     context 'user is not logged in' do
@@ -152,6 +242,22 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe "GET /decks/:id/cards/:id?side=back" do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -161,33 +267,60 @@ RSpec.describe "Cards", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test Topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
       )
     end
 
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
+        user: user
       )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
+    before do
+      topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     let!(:card) do
       Card.create!(
         title: 'Test Card',
         face_content: 'This is the content on the face (lined) of the index card.',
-        back_content: 'The back side of the card is the blank side.'
+        back_content: 'The back side of the card is the blank side.',
+        user: user
       )
     end
 
-    context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+    end
 
+    before do
+      deck.cards << card
+      other_deck.cards << other_card
+    end
+
+    context 'user is logged in' do
       before do
         post '/login', params: {
           username: user.username,
@@ -204,6 +337,12 @@ RSpec.describe "Cards", type: :request do
         get "/decks/#{deck.id}/cards/#{card.id}?side=back"
         expect(response.body).to include('The back side of the card is the blank side.')
       end
+
+
+      it "does not allow access to another user's card" do
+        get "/decks/#{deck.id}/cards/#{other_card.id}?side=face"
+        expect(response).to redirect_to(dashboard_path)
+      end
     end
 
     context 'user is not logged in' do
@@ -215,6 +354,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'GET /decks/:id/cards/new' do
+    let!(:user) do
+      User.create(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -224,13 +371,15 @@ RSpec.describe "Cards", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
     let!(:deck) do
       Deck.create!(
         title: 'Test deck',
+        user: user
       )
     end
 
@@ -239,14 +388,6 @@ RSpec.describe "Cards", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -273,6 +414,14 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'POST /decks/:id/cards' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let(:category) do
       Category.create!(
         title: 'Test category'
@@ -282,13 +431,15 @@ RSpec.describe "Cards", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
       )
     end
 
     let!(:deck) do
       Deck.create!(
-        title: 'Test deck'
+        title: 'Test deck',
+        user: user
       )
     end
 
@@ -297,14 +448,6 @@ RSpec.describe "Cards", type: :request do
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -316,7 +459,7 @@ RSpec.describe "Cards", type: :request do
         post "/decks/#{deck.id}/cards", params: {
           card: {
             title: 'New card',
-            deck_id: deck.id
+            deck_ids: [deck.id]
           }
         }
 
@@ -333,18 +476,18 @@ RSpec.describe "Cards", type: :request do
           }
         }
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(302)
       end
 
       it 'responds with 400 status when deck id does not belong to an existing deck' do
         post "/decks/#{deck.id}/cards", params: {
           card: {
             title: 'New card',
-            deck_id: 'nope'
+            deck_ids: ['nope']
           }
         }
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(404)
       end
     end
 
@@ -353,7 +496,7 @@ RSpec.describe "Cards", type: :request do
         post "/decks/#{deck.id}/cards", params: {
           card: {
             title: 'New card',
-            deck_id: deck.id
+            deck_ids: [deck.id]
           }
         }
 
@@ -363,6 +506,22 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'GET /decks/:id/cards/:id/edit' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -372,41 +531,60 @@ RSpec.describe "Cards", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
       )
     end
 
     let!(:deck) do
       Deck.create!(
-        title: 'Test deck 1'
+        title: 'Test deck 1',
+        user: user
+      )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
       )
     end
 
     before do
       topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     let!(:card) do
       Card.create!(
         title: 'Test card',
         face_content: 'Content on the face of the card',
-        back_content: 'Content on the back of the card'
+        back_content: 'Content on the back of the card',
+        user: user
+      )
+    end
+
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
       )
     end
 
     before do
       deck.cards << card
+      other_deck.cards << other_card
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -439,9 +617,15 @@ RSpec.describe "Cards", type: :request do
       end
 
       it 'displays the deck label' do
-        get "/decks/#{deck.id}/cards/#{card.id}"
+        get "/decks/#{deck.id}/cards/#{card.id}/edit"
 
         expect(response.body).to include('Deck')
+      end
+
+
+      it "does not allow access to another user's card" do
+        get "/decks/#{deck.id}/cards/#{other_card.id}?side=face"
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
@@ -454,6 +638,22 @@ RSpec.describe "Cards", type: :request do
   end
 
   describe 'PUT /decks/:id/cards/:id' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -463,48 +663,68 @@ RSpec.describe "Cards", type: :request do
     let!(:topic) do
       Topic.create!(
         title: 'Test topic',
-        category_id: category.id
+        category_id: category.id,
+        user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
       )
     end
 
     let!(:deck1) do
       Deck.create!(
-        title: 'Test deck 1'
+        title: 'Test deck 1',
+        user: user
       )
     end
 
     let!(:deck2) do
       Deck.create!(
-        title: 'Test deck 2'
+        title: 'Test deck 2',
+        user: user
+      )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
       )
     end
 
     before do
       topic.decks << deck1
       topic.decks << deck2
+      other_topic.decks << other_deck
     end
+
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+        end
 
     let!(:card) do
       Card.create!(
         title: 'Test card',
         face_content: 'Content on the face of the card',
-        back_content: 'Content on the back of the card'
+        back_content: 'Content on the back of the card',
+        user: user
       )
     end
 
     before do
       deck1.cards << card
+      other_deck.cards << other_card
     end
 
     context 'user is logged in' do
-      let!(:user) do
-        User.create!(
-          username: 'User',
-          password: 'secret',
-          role: 'user'
-        )
-      end
-
       before do
         post '/login', params: {
           username: user.username,
@@ -516,7 +736,7 @@ RSpec.describe "Cards", type: :request do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
             title: 'New title',
-            deck_id: deck2.id,
+            deck_ids: [deck2.id],
             face_content: 'Edited content on the face of the card',
             back_content: 'Edited content on the back of the card'
           }
@@ -542,18 +762,30 @@ RSpec.describe "Cards", type: :request do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
             title: 'New title',
-            deck_id: 'nope'
+            deck_ids: ['nope']
           }
         }
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(:not_found)
       end
 
       it 'responds with 404 status when card id does not belong to an existing card' do
         put "/decks/#{deck1.id}/cards/nope", params: {
           card: {
             title: 'New title',
-            deck_id: deck2.id
+            deck_ids: [deck2.id]
+          }
+        }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+
+      it "does not allow access to another user's card" do
+        put "/decks/#{deck1.id}/cards/#{other_card.id}", params: {
+          card: {
+            title: 'Other Card',
+            deck_ids: [other_deck.id]
           }
         }
 
@@ -566,9 +798,11 @@ RSpec.describe "Cards", type: :request do
         put "/decks/#{deck1.id}/cards/#{card.id}", params: {
           card: {
             title: 'New title',
-            deck_id: deck2.id
+            deck_ids: [deck2.id]
           }
         }
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

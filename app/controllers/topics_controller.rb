@@ -1,18 +1,26 @@
 class TopicsController < ApplicationController
   before_action :require_user
-  
+
   def show
-    @topic = Topic.find(params[:id])
+    @current_user = User.find_by(id: session[:user_id])
+    @topic = Topic.find_by(id: params[:id])
+
+    if @topic.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @decks = @topic.decks
   end
 
   def new
-    @topic = Topic.new
+    @current_user = User.find_by(id: session[:user_id])
+    @topic = @current_user.topics.new
     @categories = Category.all
   end
 
   def create
-    @topic = Topic.new(topic_params)
+    @current_user = User.find_by(id: session[:user_id])
+    @topic = @current_user.topics.new(topic_params)
     @categories = Category.all
 
     respond_to do |format|
@@ -27,12 +35,24 @@ class TopicsController < ApplicationController
   end
 
   def edit
+    @current_user = User.find_by(id: session[:user_id])
     @topic =  Topic.find(params[:id])
+
+    if @topic.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @categories = Category.all
   end
 
   def update
+    @current_user = User.find_by(id: session[:user_id])
     @topic = Topic.find(params[:id])
+
+    if @topic.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @categories = Category.all
 
     respond_to do |format|

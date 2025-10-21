@@ -83,6 +83,14 @@ RSpec.describe "Categories", type: :request do
         )
       end
 
+      let!(:other_user) do
+        User.create!(
+          username: 'Other',
+          password: 'secret',
+          role: 'user'
+        )
+      end
+
       before do
         post '/login', params: {
           username: user.username,
@@ -106,14 +114,24 @@ RSpec.describe "Categories", type: :request do
         let!(:topic1) do
           Topic.create!(
             title: 'Test Topic 1',
-            category_id: category.id
+            category_id: category.id,
+            user: user
           )
         end
 
         let!(:topic2) do
           Topic.create!(
             title: 'Test Topic 2',
-            category_id: category.id
+            category_id: category.id,
+            user: user
+          )
+        end
+
+        let!(:other_topic) do
+          Topic.create!(
+            title: 'Misfit',
+            category_id: category.id,
+            user: other_user
           )
         end
 
@@ -129,6 +147,12 @@ RSpec.describe "Categories", type: :request do
 
           expect(response.body).to include("topics/#{topic1.id}")
           expect(response.body).to include("topics/#{topic2.id}")
+        end
+
+        it 'does not display topics belonging to another user' do
+          get "/categories/#{category.id}"
+
+          expect(response.body).not_to include("/topics/#{other_topic.id}")
         end
       end
     end

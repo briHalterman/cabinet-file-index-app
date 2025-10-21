@@ -1,13 +1,25 @@
 class CardsController < ApplicationController
   before_action :require_user
-  
+  before_action :set_card, only: %i[show edit update destroy]
+
   def index
-    @cards = Card.all
+    @current_user = User.find_by(id: session[:user_id])
+    @cards = @current_user.cards
   end
 
   def show
-    @deck = Deck.find(params[:deck_id])
-    @card = @deck.cards.find(params[:id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @card = @deck.cards.find_by(id: params[:id])
+
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
 
     if params[:side] == "face"
       @content = @card.face_content
@@ -17,23 +29,26 @@ class CardsController < ApplicationController
   end
 
   def new
-    @deck = Deck.find(params[:deck_id])
-    @card = @deck.cards.new
-    @decks = Deck.all
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+    @card = @deck.cards.build
+    @decks = @current_user.decks
   end
 
   def create
-    @deck = Deck.find(params[:deck_id])
-    @card = @deck.cards.new(card_params)
-    @decks = Deck.all
-    deck = Deck.find_by(id: params[:card][:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    # @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+    @card = @deck.cards.build(card_params)
+    @decks = @current_user.decks
+    @card.user = @current_user
 
     respond_to do |format|
-      if params[:card][:deck_id].present? && deck && @card.save
-        @card.decks << deck
+      if @card.save
+        @card.decks = @current_user.decks.where(id: card_params[:deck_ids])
 
         format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully saved.' }
-        format.json { render :show, status: :created, location: :card }
+        format.json { render :show, status: :created, location: @card }
       else
         format.html { render :new, status: :bad_request }
         format.json { render json: @card.errors, status: :bad_request}
@@ -42,23 +57,47 @@ class CardsController < ApplicationController
   end
 
   def edit
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    # @deck = @current_user.decks.includes(:cards).find_by(id: params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @card = @deck.cards.find(params[:id])
-    @decks = Deck.all
+
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @decks = @current_user.decks
   end
 
   def update
-    @deck = Deck.find(params[:deck_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @card = @deck.cards.find(params[:id])
-    @decks = Deck.all
-    deck = Deck.find_by(id: params[:card][:deck_id])
+
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @decks = @current_user.decks
+    @card.user = @current_user
 
     respond_to do |format|
-      if params[:card][:deck_id].present? && deck && @card.update(card_params)
-        @card.decks = [deck]
+      if params[:card][:deck_ids]&.reject(&:blank?)&.any? && @card.update(card_params)
+        @card.decks = @current_user.decks.where(id: card_params[:deck_ids])
+        @deck = @card.decks.first
 
-        format.html { redirect_to deck_card_path(deck, @card), notice: 'Card was successfully updated' }
-        format.json { render :show, status: :ok, location: :card }
+        format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully updated' }
+        format.json { render :show, status: :ok, location: @card }
       else
         format.html { render :edit, status: :bad_request }
         format.json { render json: @card.errors, status: :bad_request }
@@ -71,6 +110,10 @@ class CardsController < ApplicationController
   private
 
   def card_params
-    params.require(:card).permit(:title, :face_content, :back_content)
+    params.require(:card).permit(:title, :face_content, :back_content, deck_ids: [])
+  end
+
+  def set_card
+    @card = Card.find(params[:id])
   end
 end

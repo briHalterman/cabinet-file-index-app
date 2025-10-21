@@ -2,28 +2,37 @@ class DecksController < ApplicationController
   before_action :require_user
 
   def show
-    @deck = Deck.find(params[:id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.find_by(id: params[:id])
+
+    if @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @cards = @deck.cards
   end
 
   def new
-    @deck = Deck.new
-    @topics = Topic.all
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.new
+    @topics = @current_user.topics
   end
 
   def create
-    @deck = Deck.new(deck_params)
-    @topics = Topic.all
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = @current_user.decks.new(deck_params)
+    @topics = @current_user.topics
 
     respond_to do |format|
       if params[:deck][:topic_id].present?
-        topic = Topic.find_by(id: params[:deck][:topic_id])
+        topic = @current_user.topics.find_by(id: params[:deck][:topic_id])
+
         if topic
           if @deck.save
             @deck.topics << topic
 
             format.html { redirect_to deck_path(@deck), notice: 'Deck was successfully saved.' }
-            format.json { render :show, status: :created, location: :deck }
+            format.json { render :show, status: :created, location: @deck }
           else
             format.html { render :new, status: :bad_request }
             format.json { render json: @deck.errors, status: :bad_request }
@@ -40,21 +49,34 @@ class DecksController < ApplicationController
   end
 
   def edit
-    @deck = Deck.find(params[:id])
-    @topics = Topic.all
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.includes(:cards).find(params[:id])
+
+    if @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @topics = @current_user.topics
   end
 
   def update
-    @deck = Deck.find(params[:id])
-    @topics = Topic.all
-    topic = Topic.find_by(id: params[:deck][:topic_id])
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.includes(:cards).find(params[:id])
+
+
+    if @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @topics = @current_user.topics
+    topic = @current_user.topics.find_by(id: params[:deck][:topic_id])
 
     respond_to do |format|
       if params[:deck][:topic_id].present? && topic && @deck.update(deck_params)
         @deck.topics = [topic]
 
         format.html { redirect_to @deck, notice: 'Deck was successfully updated.' }
-        format.json { render :show, status: :ok, location: :deck }
+        format.json { render :show, status: :ok, location: @deck }
       else
         format.html { render :edit, status: :bad_request }
         format.json { render json: @deck.errors, status: :bad_request }
