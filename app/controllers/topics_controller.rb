@@ -6,7 +6,7 @@ class TopicsController < ApplicationController
     @topic = Topic.find_by(id: params[:id])
 
     if @topic.user_id != @current_user.id
-      redirect_to root_path
+      redirect_to root_path and return
     end
 
     @decks = @topic.decks
@@ -37,12 +37,22 @@ class TopicsController < ApplicationController
   def edit
     @current_user = User.find_by(id: session[:user_id])
     @topic =  @current_user.topics.find(params[:id])
+
+    if @topic.user_id != @current_user.id
+      redirect_to root_path and return
+    end
+
     @categories = Category.all
   end
 
   def update
     @current_user = User.find_by(id: session[:user_id])
     @topic = @current_user.topics.find(params[:id])
+
+    if @topic.user_id != @current_user.id
+      redirect_to root_path and return
+    end
+
     @categories = Category.all
 
     respond_to do |format|

@@ -4,18 +4,16 @@ class CardsController < ApplicationController
 
   def index
     @current_user = User.find_by(id: session[:user_id])
-    # @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @cards = @current_user.cards
   end
 
   def show
     @current_user = User.find_by(id: session[:user_id])
-    # @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
     @card = @deck.cards.find_by(id: params[:id])
 
     if @card.user_id != @current_user.id
-      redirect_to root_path
+      redirect_to root_path and return
     end
 
     if params[:side] == "face"
@@ -37,18 +35,14 @@ class CardsController < ApplicationController
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.build(card_params)
     @decks = @current_user.decks
-    # deck = @current_user.decks.find_by(id: params[:card][:deck_id])
-    # user: current_user
     @card.user = @current_user
 
     respond_to do |format|
       if @card.save
-      # if params[:card][:deck_id].present? && deck && @card.save
-        # @card.decks << deck
         @card.decks = @current_user.decks.where(id: card_params[:deck_ids])
 
         format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully saved.' }
-        format.json { render :show, status: :created, location: :card }
+        format.json { render :show, status: :created, location: @card }
       else
         format.html { render :new, status: :bad_request }
         format.json { render json: @card.errors, status: :bad_request}
@@ -59,8 +53,12 @@ class CardsController < ApplicationController
   def edit
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find_by(id: params[:deck_id])
-    # debugger
     @card = @deck.cards.find(params[:id])
+
+    if @card.user_id != @current_user.id
+      redirect_to root_path and return
+    end
+
     @decks = @current_user.decks
   end
 
@@ -68,10 +66,14 @@ class CardsController < ApplicationController
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.find(params[:id])
+
+    if @card.user_id != @current_user.id
+      redirect_to root_path and return
+    end
+
     @decks = @current_user.decks
-    # deck = @current_user.decks.find_by(id: params[:card][:deck_id])
     @card.user = @current_user
-    # debugger
+
     respond_to do |format|
       if params[:card][:deck_ids]&.reject(&:blank?)&.any? && @card.update(card_params)
         @card.decks = @current_user.decks.where(id: card_params[:deck_ids])

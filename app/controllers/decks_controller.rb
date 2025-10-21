@@ -6,7 +6,7 @@ class DecksController < ApplicationController
     @deck = Deck.find_by(id: params[:id])
 
     if @deck.user_id != @current_user.id
-      redirect_to root_path
+      redirect_to root_path and return
     end
 
     @cards = @deck.cards
@@ -51,12 +51,23 @@ class DecksController < ApplicationController
   def edit
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find(params[:id])
+
+    if @deck.user_id != @current_user.id
+      redirect_to root_path and return
+    end
+
     @topics = @current_user.topics
   end
 
   def update
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find(params[:id])
+
+
+    if @deck.user_id != @current_user.id
+      redirect_to root_path and return
+    end
+
     @topics = @current_user.topics
     topic = @current_user.topics.find_by(id: params[:deck][:topic_id])
 
@@ -65,7 +76,7 @@ class DecksController < ApplicationController
         @deck.topics = [topic]
 
         format.html { redirect_to @deck, notice: 'Deck was successfully updated.' }
-        format.json { render :show, status: :ok, location: :deck }
+        format.json { render :show, status: :ok, location: @deck }
       else
         format.html { render :edit, status: :bad_request }
         format.json { render json: @deck.errors, status: :bad_request }
