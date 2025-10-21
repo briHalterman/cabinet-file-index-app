@@ -9,6 +9,12 @@ RSpec.describe "Dashboard", type: :request do
         role: 'user'
       )
 
+      @other_user = User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+
       @category1 = Category.create!(
         title: "Test Category 1"
       )
@@ -64,6 +70,12 @@ RSpec.describe "Dashboard", type: :request do
         category_id: @category2.id,
         user: @user
       )
+
+      @other_topic = Topic.create!(
+        title: "Misfit",
+        category_id: @category1.id,
+        user: @other_user
+      )
     end
 
     context 'user is logged in' do
@@ -107,6 +119,12 @@ RSpec.describe "Dashboard", type: :request do
 
         expect(response.body).to include("/categories/#{@category1.id}")
         expect(response.body).to include("/categories/#{@category2.id}")
+      end
+
+      it "does not display topics belonging to another user" do
+        get "/dashboard"
+
+        expect(response.body).not_to include("/topics/#{@other_topic.id}")
       end
     end
 

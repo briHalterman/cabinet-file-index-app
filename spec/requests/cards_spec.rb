@@ -11,6 +11,14 @@ RSpec.describe "Cards", type: :request do
         )
       end
 
+      let!(:other_user) do
+        User.create!(
+          username: 'Other',
+          password: 'secret',
+          role: 'user'
+        )
+      end
+
       before do
         post '/login', params: {
           username: user.username,
@@ -38,6 +46,14 @@ RSpec.describe "Cards", type: :request do
           )
         end
 
+        let!(:other_topic) do
+          Topic.create!(
+            title: 'Misfit Topic',
+            category_id: category.id,
+            user: other_user
+          )
+        end
+
         let!(:deck) do
           Deck.create!(
             title: 'Test Deck',
@@ -45,8 +61,16 @@ RSpec.describe "Cards", type: :request do
           )
         end
 
+        let!(:other_deck) do
+          Deck.create!(
+            title: 'Misfit Deck',
+            user: other_user
+          )
+        end
+
         before do
           topic.decks << deck
+          other_topic.decks << other_deck
         end
 
         let!(:card1) do
@@ -63,15 +87,29 @@ RSpec.describe "Cards", type: :request do
           )
         end
 
+        let(:other_card) do
+          Card.create!(
+            title: 'Misfit Card',
+            user: other_user
+          )
+        end
+
         before do
           deck.cards << card1
           deck.cards << card2
+          other_deck.cards << other_card
         end
 
         it 'returns a page containing titles of all cards' do
           get '/cards'
           expect(response.body).to include('Test Card 1')
           expect(response.body).to include('Test Card 2')
+        end
+
+        it 'does not display cards belonging to another user' do
+          get '/cards'
+
+          expect(response.body).not_to include('Other Card')
         end
       end
 
@@ -101,6 +139,14 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -115,11 +161,31 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
         user: user
       )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user,
+      )
+    end
+
+    before do
+      topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     let!(:card) do
@@ -131,8 +197,16 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+    end
+
     before do
       deck.cards << card
+      other_deck.cards << other_card
     end
 
     context 'user is logged in' do
@@ -151,6 +225,11 @@ RSpec.describe "Cards", type: :request do
       it 'returns the content on the face of the card' do
         get "/decks/#{deck.id}/cards/#{card.id}?side=face"
         expect(response.body).to include('This is the content on the face (lined) of the index card.')
+      end
+
+      it "does not allow access to another user's card" do
+        get "/decks/#{deck.id}/cards/#{other_card.id}?side=face"
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
@@ -171,6 +250,14 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -185,11 +272,31 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
         user: user
       )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
+    before do
+      topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     let!(:card) do
@@ -201,8 +308,16 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+    end
+
     before do
       deck.cards << card
+      other_deck.cards << other_card
     end
 
     context 'user is logged in' do
@@ -221,6 +336,12 @@ RSpec.describe "Cards", type: :request do
       it 'returns the content on the face of the card' do
         get "/decks/#{deck.id}/cards/#{card.id}?side=back"
         expect(response.body).to include('The back side of the card is the blank side.')
+      end
+
+
+      it "does not allow access to another user's card" do
+        get "/decks/#{deck.id}/cards/#{other_card.id}?side=face"
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
@@ -393,6 +514,14 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -407,6 +536,14 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
     let!(:deck) do
       Deck.create!(
         title: 'Test deck 1',
@@ -414,8 +551,16 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
     before do
       topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     let!(:card) do
@@ -427,8 +572,16 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+    end
+
     before do
       deck.cards << card
+      other_deck.cards << other_card
     end
 
     context 'user is logged in' do
@@ -468,6 +621,12 @@ RSpec.describe "Cards", type: :request do
 
         expect(response.body).to include('Deck')
       end
+
+
+      it "does not allow access to another user's card" do
+        get "/decks/#{deck.id}/cards/#{other_card.id}?side=face"
+        expect(response).to redirect_to(dashboard_path)
+      end
     end
 
     context 'user is not logged in' do
@@ -487,6 +646,14 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -498,6 +665,14 @@ RSpec.describe "Cards", type: :request do
         title: 'Test topic',
         category_id: category.id,
         user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
       )
     end
 
@@ -515,10 +690,25 @@ RSpec.describe "Cards", type: :request do
       )
     end
 
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
     before do
       topic.decks << deck1
       topic.decks << deck2
+      other_topic.decks << other_deck
     end
+
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+        end
 
     let!(:card) do
       Card.create!(
@@ -531,6 +721,7 @@ RSpec.describe "Cards", type: :request do
 
     before do
       deck1.cards << card
+      other_deck.cards << other_card
     end
 
     context 'user is logged in' do
@@ -588,6 +779,18 @@ RSpec.describe "Cards", type: :request do
 
         expect(response).to have_http_status(:not_found)
       end
+
+
+      it "does not allow access to another user's card" do
+        put "/decks/#{deck1.id}/cards/#{other_card.id}", params: {
+          card: {
+            title: 'Other Card',
+            deck_ids: [other_deck.id]
+          }
+        }
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     context 'user is not logged in' do
@@ -598,6 +801,8 @@ RSpec.describe "Cards", type: :request do
             deck_ids: [deck2.id]
           }
         }
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

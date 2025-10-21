@@ -6,7 +6,7 @@ class DecksController < ApplicationController
     @deck = Deck.find_by(id: params[:id])
 
     if @deck.user_id != @current_user.id
-      redirect_to root_path and return
+      redirect_to dashboard_path and return
     end
 
     @cards = @deck.cards
@@ -50,10 +50,10 @@ class DecksController < ApplicationController
 
   def edit
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:id])
+    @deck = Deck.includes(:cards).find(params[:id])
 
     if @deck.user_id != @current_user.id
-      redirect_to root_path and return
+      redirect_to dashboard_path and return
     end
 
     @topics = @current_user.topics
@@ -61,11 +61,11 @@ class DecksController < ApplicationController
 
   def update
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:id])
+    @deck = Deck.includes(:cards).find(params[:id])
 
 
     if @deck.user_id != @current_user.id
-      redirect_to root_path and return
+      redirect_to dashboard_path and return
     end
 
     @topics = @current_user.topics

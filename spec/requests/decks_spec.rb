@@ -10,6 +10,14 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test Category'
@@ -24,6 +32,14 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
     let!(:deck) do
       Deck.create!(
         title: 'Test Deck',
@@ -31,8 +47,16 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
     before do
       topic.decks << deck
+      other_topic.decks << other_deck
     end
 
     context 'user is logged in' do
@@ -53,6 +77,12 @@ RSpec.describe "Decks", type: :request do
         get "/decks/#{deck.id}"
 
         expect(response.body).to include('Test Deck')
+      end
+
+      it "does not allow access to another user's deck" do
+        get "/decks/#{other_deck.id}"
+
+        expect(response).to redirect_to(dashboard_path)
       end
 
       context 'decks exist' do
@@ -220,6 +250,14 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category'
@@ -234,6 +272,14 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
     let!(:deck) do
       Deck.create!(
         title: 'Test deck',
@@ -241,8 +287,16 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
     before do
       topic.decks << deck
+      other_topic.decks << deck
     end
 
     context 'user is logged in' do
@@ -270,6 +324,12 @@ RSpec.describe "Decks", type: :request do
 
         expect(response.body).to include('Topic')
       end
+
+      it "does not allow access to another user's decks" do
+        get "/decks/#{other_deck.id}/edit"
+
+        expect(response).to redirect_to(dashboard_path)
+      end
     end
 
     context 'user is not logged in' do
@@ -289,6 +349,14 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
     let!(:category) do
       Category.create!(
         title: 'Test category 1'
@@ -303,11 +371,26 @@ RSpec.describe "Decks", type: :request do
       )
     end
 
-    let(:topic2) do
+    let!(:topic2) do
       Topic.create!(
         title: 'Test topic 2',
         category_id: category.id,
         user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
       )
     end
 
@@ -320,6 +403,7 @@ RSpec.describe "Decks", type: :request do
 
     before do
       topic1.decks << deck
+      other_topic.decks << other_deck
     end
 
     context 'user is logged in' do
@@ -375,6 +459,15 @@ RSpec.describe "Decks", type: :request do
 
         expect(response).to have_http_status(:not_found)
       end
+
+      it "does not allow access to another user's deck" do
+        put "/decks/#{other_deck.id}", params: {
+          title: 'Other Deck',
+          topic_id: other_topic.id
+        }
+
+        expect(response).to redirect_to(dashboard_path)
+      end
     end
 
     context 'user is not logged in' do
@@ -385,6 +478,8 @@ RSpec.describe "Decks", type: :request do
             topic_id: topic2.id
           }
         }
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

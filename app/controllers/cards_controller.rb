@@ -10,10 +10,15 @@ class CardsController < ApplicationController
   def show
     @current_user = User.find_by(id: session[:user_id])
     @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @card = @deck.cards.find_by(id: params[:id])
 
-    if @card.user_id != @current_user.id
-      redirect_to root_path and return
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
     end
 
     if params[:side] == "face"
@@ -25,14 +30,15 @@ class CardsController < ApplicationController
 
   def new
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
     @card = @deck.cards.build
     @decks = @current_user.decks
   end
 
   def create
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    # @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
     @card = @deck.cards.build(card_params)
     @decks = @current_user.decks
     @card.user = @current_user
@@ -52,11 +58,17 @@ class CardsController < ApplicationController
 
   def edit
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find_by(id: params[:deck_id])
+    # @deck = @current_user.decks.includes(:cards).find_by(id: params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @card = @deck.cards.find(params[:id])
 
-    if @card.user_id != @current_user.id
-      redirect_to root_path and return
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
     end
 
     @decks = @current_user.decks
@@ -64,11 +76,16 @@ class CardsController < ApplicationController
 
   def update
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
     @card = @deck.cards.find(params[:id])
 
-    if @card.user_id != @current_user.id
-      redirect_to root_path and return
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
     end
 
     @decks = @current_user.decks
