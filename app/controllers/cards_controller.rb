@@ -65,14 +65,15 @@ class CardsController < ApplicationController
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.find(params[:id])
     @decks = @current_user.decks
-    deck = @current_user.decks.find_by(id: params[:card][:deck_id])
-
+    # deck = @current_user.decks.find_by(id: params[:card][:deck_id])
+    @card.user = @current_user
+    # debugger
     respond_to do |format|
-      if params[:card][:deck_id].present? && deck && @card.update(card_params)
-        @card.decks = [deck]
+      if params[:card][:deck_ids].reject(&:blank?).any? && @card.update(card_params)
+        @card.decks = @current_user.decks.where(id: card_params[:deck_ids])
 
-        format.html { redirect_to deck_card_path(deck, @card), notice: 'Card was successfully updated' }
-        format.json { render :show, status: :ok, location: :card }
+        format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully updated' }
+        format.json { render :show, status: :ok, location: @card }
       else
         format.html { render :edit, status: :bad_request }
         format.json { render json: @card.errors, status: :bad_request }
