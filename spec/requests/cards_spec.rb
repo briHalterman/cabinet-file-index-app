@@ -338,7 +338,7 @@ RSpec.describe "Cards", type: :request do
         post "/decks/#{deck.id}/cards", params: {
           card: {
             title: 'New card',
-            deck_id: deck.id
+            deck_ids: [deck.id]
           }
         }
 
@@ -355,18 +355,18 @@ RSpec.describe "Cards", type: :request do
           }
         }
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(302)
       end
 
       it 'responds with 400 status when deck id does not belong to an existing deck' do
         post "/decks/#{deck.id}/cards", params: {
           card: {
             title: 'New card',
-            deck_id: 'nope'
+            deck_ids: ['nope']
           }
         }
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(404)
       end
     end
 
@@ -375,7 +375,7 @@ RSpec.describe "Cards", type: :request do
         post "/decks/#{deck.id}/cards", params: {
           card: {
             title: 'New card',
-            deck_id: deck.id
+            deck_ids: [deck.id]
           }
         }
 

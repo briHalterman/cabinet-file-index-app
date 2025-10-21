@@ -3,8 +3,13 @@ class TopicsController < ApplicationController
 
   def show
     @current_user = User.find_by(id: session[:user_id])
-    @topic = @current_user.topics.find_by(id: params[:id])
-    @decks = @current_user.decks
+    @topic = Topic.find_by(id: params[:id])
+
+    if @topic.user_id != @current_user.id
+      redirect_to root_path
+    end
+
+    @decks = @topic.decks
   end
 
   def new

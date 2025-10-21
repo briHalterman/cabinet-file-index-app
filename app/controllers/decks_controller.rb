@@ -4,7 +4,7 @@ class DecksController < ApplicationController
   def show
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.find(params[:id])
-    @cards = @current_user.cards
+    @cards = @deck.cards
   end
 
   def new

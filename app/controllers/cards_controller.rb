@@ -10,7 +10,8 @@ class CardsController < ApplicationController
 
   def show
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    # @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
     @card = @deck.cards.find_by(id: params[:id])
 
     if params[:side] == "face"
@@ -32,13 +33,15 @@ class CardsController < ApplicationController
     @deck = @current_user.decks.includes(:cards).find(params[:deck_id])
     @card = @deck.cards.build(card_params)
     @decks = @current_user.decks
-    deck = @current_user.decks.find_by(id: params[:card][:deck_id])
+    # deck = @current_user.decks.find_by(id: params[:card][:deck_id])
     # user: current_user
     @card.user = @current_user
 
     respond_to do |format|
-      if params[:card][:deck_id].present? && deck && @card.save
-        @card.decks << deck
+      if @card.save
+      # if params[:card][:deck_id].present? && deck && @card.save
+        # @card.decks << deck
+        @card.decks = @current_user.decks.where(id: card_params[:deck_ids])
 
         format.html { redirect_to deck_card_path(@deck, @card), notice: 'Card was successfully saved.' }
         format.json { render :show, status: :created, location: :card }
@@ -53,7 +56,7 @@ class CardsController < ApplicationController
     @current_user = User.find_by(id: session[:user_id])
     @deck = @current_user.decks.includes(:cards).find_by(id: params[:deck_id])
     # debugger
-    # @card = @deck.cards.find(params[:id])
+    @card = @deck.cards.find(params[:id])
     @decks = @current_user.decks
   end
 
@@ -82,7 +85,7 @@ class CardsController < ApplicationController
   private
 
   def card_params
-    params.require(:card).permit(:title, :face_content, :back_content)
+    params.require(:card).permit(:title, :face_content, :back_content, deck_ids: [])
   end
 
   def set_card

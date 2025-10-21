@@ -16,7 +16,7 @@
 
   <div>
     <%= form.label :deck_id, style: "display: block" %>
-    <%= form.collection_select :deck_ids, @decks, :id, :title, { prompt: 'Select Deck' }, { multiple: true } %>
+    <%= form.collection_select :deck_ids, @decks, :id, :title, { selected: @card.deck_ids }, { multiple: true } %>
   </div>
 
   <div>
