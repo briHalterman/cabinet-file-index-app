@@ -25,13 +25,14 @@ class DecksController < ApplicationController
 
     respond_to do |format|
       if params[:deck][:topic_id].present?
-        topic = Topic.find_by(id: params[:deck][:topic_id])
+        topic = @current_user.topics.find_by(id: params[:deck][:topic_id])
+
         if topic
           if @deck.save
             @deck.topics << topic
 
             format.html { redirect_to deck_path(@deck), notice: 'Deck was successfully saved.' }
-            format.json { render :show, status: :created, location: :deck }
+            format.json { render :show, status: :created, location: @deck }
           else
             format.html { render :new, status: :bad_request }
             format.json { render json: @deck.errors, status: :bad_request }
