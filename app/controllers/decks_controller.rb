@@ -3,7 +3,12 @@ class DecksController < ApplicationController
 
   def show
     @current_user = User.find_by(id: session[:user_id])
-    @deck = @current_user.decks.find(params[:id])
+    @deck = Deck.find_by(id: params[:id])
+
+    if @deck.user_id != @current_user.id
+      redirect_to root_path
+    end
+
     @cards = @deck.cards
   end
 
