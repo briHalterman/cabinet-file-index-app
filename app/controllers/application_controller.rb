@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   def require_user
     if session[:role] != 'user'
-      flash[:alert] = 'You do not have access tot that page'
+      flash[:alert] = 'You do not have access to that page'
         redirect_to login_path
         response.status = 403
       end
