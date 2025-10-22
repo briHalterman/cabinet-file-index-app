@@ -315,11 +315,11 @@ erDiagram
 
 ## Stretch Goals (and polishing)
 
-- [ ] Associate topics, decks and cards with the logged-in user
+- [x] Associate topics, decks and cards with the logged-in user
 - [ ] Finish implementing CRUD by adding ability to delete
 - [ ] Debug flash messages
 - [ ] Views
-- [ ] Specs
+- [ ] Refactor Specs
 - [ ] Styling
 - [ ] Deploy
 

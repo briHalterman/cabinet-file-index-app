@@ -782,14 +782,14 @@ RSpec.describe "Cards", type: :request do
 
 
       it "does not allow access to another user's card" do
-        put "/decks/#{deck1.id}/cards/#{other_card.id}", params: {
+        put "/decks/#{other_deck.id}/cards/#{other_card.id}", params: {
           card: {
             title: 'Other Card',
             deck_ids: [other_deck.id]
           }
         }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
@@ -801,6 +801,126 @@ RSpec.describe "Cards", type: :request do
             deck_ids: [deck2.id]
           }
         }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
+  describe 'DELETE /decks/:id/cards/:id/' do
+    let!(:user) do
+      User.create!(
+        username: 'User',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
+    let!(:other_user) do
+      User.create!(
+        username: 'Other',
+        password: 'secret',
+        role: 'user'
+      )
+    end
+
+    let!(:category) do
+      Category.create!(
+        title: 'Test category'
+      )
+    end
+
+    let!(:topic) do
+      Topic.create!(
+        title: 'Test topic',
+        category_id: category.id,
+        user: user
+      )
+    end
+
+    let!(:other_topic) do
+      Topic.create!(
+        title: 'Misfit Topic',
+        category_id: category.id,
+        user: other_user
+      )
+    end
+
+    let!(:deck1) do
+      Deck.create!(
+        title: 'Test deck 1',
+        user: user
+      )
+    end
+
+    let!(:deck2) do
+      Deck.create!(
+        title: 'Test deck 2',
+        user: user
+      )
+    end
+
+    let!(:other_deck) do
+      Deck.create!(
+        title: 'Misfit Deck',
+        user: other_user
+      )
+    end
+
+    before do
+      topic.decks << deck1
+      topic.decks << deck2
+      other_topic.decks << other_deck
+    end
+
+    let!(:other_card) do
+      Card.create!(
+        title: 'Misfit Card',
+        user: other_user
+      )
+        end
+
+    let!(:card) do
+      Card.create!(
+        title: 'Test card',
+        face_content: 'Content on the face of the card',
+        back_content: 'Content on the back of the card',
+        user: user
+      )
+    end
+
+    before do
+      deck1.cards << card
+      other_deck.cards << other_card
+    end
+
+    context 'user is logged in' do
+      before do
+        post '/login', params: {
+          username: user.username,
+          password: 'secret'
+        }
+      end
+
+      it "deletes a card when card exists" do
+        delete "/decks/#{deck1.id}/cards/#{card.id}"
+
+        expect(response).to redirect_to(deck_path(deck1.id))
+        deck1.reload
+        expect(response.body).not_to include('Test card')
+      end
+
+
+      it "does not allow access to another user's card" do
+        delete "/decks/#{other_deck.id}/cards/#{other_card.id}"
+
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    context 'user is not logged in' do
+      it 'returns a 403 forbidden status' do
+        delete "/decks/#{deck1.id}/cards/#{card.id}"
 
         expect(response).to have_http_status(:forbidden)
       end
