@@ -105,7 +105,23 @@ class CardsController < ApplicationController
     end
   end
 
-  def destroy; end
+  def destroy
+    @current_user = User.find_by(id: session[:user_id])
+    @deck = Deck.where(id: params[:deck_id], user_id: @current_user.id).first
+
+    if !@deck || @deck.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @card = @deck.cards.find(params[:id])
+
+    if !@card || @card.user_id != @current_user.id
+      redirect_to dashboard_path and return
+    end
+
+    @card.destroy
+    redirect_to deck_path(@deck), notice: 'Card was deleted'
+  end
 
   private
 
