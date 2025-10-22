@@ -113,11 +113,7 @@ class CardsController < ApplicationController
       redirect_to dashboard_path and return
     end
 
-    @card = @deck.cards.find(params[:id])
-
-    if !@card || @card.user_id != @current_user.id
-      redirect_to dashboard_path and return
-    end
+    @card = @deck.cards.find_by(id: params[:id])
 
     @card.destroy
     redirect_to deck_path(@deck), notice: 'Card was deleted'

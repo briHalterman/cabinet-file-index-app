@@ -1,2 +1,8 @@
 <h1><%= @deck.title %></h1>
 <p><%= @content %></p>
+<%= link_to "View Card Face", deck_card_path(@deck, @card, side: "face") %>
+<%= link_to "View Card Back", deck_card_path(@deck, @card, side: "back") %>
+<br>
+<%= link_to "Edit Card", edit_deck_card_path(@deck, @card) %>
+<%= button_to "Delete Card", deck_card_path(@deck, @card), method: :delete %>
+

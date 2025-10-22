@@ -4,3 +4,7 @@
     <li><%= link_to card.title, deck_card_path(@deck, card, side: "face") %></li>
   <% end %>
 </ul>
+<%= link_to "New Card", new_deck_card_path(@deck) %>
+<%= link_to "Edit Deck", edit_deck_path(@deck) %>
+
+
