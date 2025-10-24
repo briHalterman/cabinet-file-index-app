@@ -8,7 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-categories = %w[Flashcards, Recipes, Contacts]
+categories = %w[Flashcards Recipes Contacts]
 
 categories.each do |category|
   Category.find_or_create_by!(title: category)
