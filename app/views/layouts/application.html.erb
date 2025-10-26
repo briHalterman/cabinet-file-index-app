@@ -25,14 +25,12 @@
   <body>
     <div class="header">
       <nav>
-        <ul>
-          <li>
-            <% user = User.find_by(id: session[:user_id]) %>
-            <% if user %>
-              <span class="nav-link">Welcome, <%= user.username %>!</span>
-            <% end %>
-          </li>
-        </ul>
+        <div>
+          <% user = User.find_by(id: session[:user_id]) %>
+          <% if user %>
+            <span class="nav-link">Welcome, <%= user.username %>!</span>
+          <% end %>
+        </div>
         <div class="login-logout">
           <% if session[:user_id] %>
             <%= button_to 'Logout', logout_path, method: :delete, class: 'logout-link nav-link', data: { confirm: 'Are you sure you want to log out?' } %>
